@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Rotina</title>
+<title>Painel Pessoal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -557,6 +557,235 @@
   }
   .toast.show{ opacity:1; transform: translate(-50%, 0); }
 
+  /* ---------- Tabs (agora com scroll horizontal p/ 6 abas) ---------- */
+  .tabs-scroll{
+    overflow-x:auto;
+    scrollbar-width:none;
+    margin: 0 -20px;
+    padding: 0 20px;
+  }
+  .tabs-scroll::-webkit-scrollbar{ display:none; }
+  .tabs{ width:max-content; min-width:100%; }
+  .tabs button{ padding: 10px 16px; white-space:nowrap; flex:none; }
+
+  /* ---------- Visão da Vida (home) ---------- */
+  .home-greeting{
+    font-family:'Fraunces', serif;
+    font-size: 30px;
+    font-weight:500;
+    margin: 4px 0 2px;
+    font-variation-settings: 'opsz' 40;
+  }
+  .home-date{ font-size:13.5px; color: var(--ink-soft); margin: 0 0 18px; }
+  .home-grid{ display:flex; flex-direction:column; gap:10px; }
+  .home-card{
+    background: var(--surface);
+    border-radius: 16px;
+    box-shadow: var(--shadow-sm);
+    padding: 15px 16px;
+    display:flex;
+    align-items:center;
+    gap:13px;
+    cursor:pointer;
+    transition: box-shadow .15s ease, transform .1s ease;
+  }
+  .home-card:active{ transform: scale(.98); }
+  .home-card .ic{
+    width:38px; height:38px; border-radius:11px;
+    background: var(--moss-soft); color: var(--moss-deep);
+    display:flex; align-items:center; justify-content:center;
+    font-size:18px; flex-shrink:0;
+  }
+  .home-card .body{ flex:1; min-width:0; }
+  .home-card .title{ font-size:14.5px; font-weight:600; color: var(--ink); }
+  .home-card .sub{ font-size:12.5px; color: var(--ink-soft); margin-top:2px; }
+  .home-card .chev{ color: var(--ink-faint); flex-shrink:0; }
+  .home-card.attn .ic{ background: var(--amber-soft); color:#6B4712; }
+
+  .ai-hero{
+    margin-top: 6px;
+    background: linear-gradient(135deg, var(--moss) 0%, var(--moss-deep) 100%);
+    border-radius: var(--radius);
+    padding: 18px 18px 20px;
+    color: white;
+    box-shadow: var(--shadow-md);
+    cursor:pointer;
+  }
+  .ai-hero:active{ transform: scale(.98); }
+  .ai-hero .label{ font-size:12px; font-weight:600; opacity:.85; text-transform:uppercase; letter-spacing:.04em; }
+  .ai-hero .q{ font-family:'Fraunces', serif; font-size:19px; font-weight:500; margin: 6px 0 2px; line-height:1.3; }
+  .ai-hero .hint{ font-size:12.5px; opacity:.8; margin-top:6px; }
+
+  /* ---------- Genérico: cabeçalho de seção + botão IA ---------- */
+  .section-top{ display:flex; align-items:center; justify-content:space-between; margin: 14px 4px 10px; }
+  .section-hint{ font-size:12.5px; color: var(--ink-soft); margin: -2px 4px 12px; line-height:1.5; }
+  .ai-btn{
+    display:flex; align-items:center; gap:6px;
+    border:none; background: var(--moss-soft); color: var(--moss-deep);
+    font-family:'Work Sans', sans-serif; font-size:12.5px; font-weight:600;
+    padding: 8px 13px; border-radius: 999px; cursor:pointer; flex-shrink:0;
+  }
+  .ai-btn:active{ transform: scale(.96); }
+  .ai-btn[disabled]{ opacity:.5; }
+  .ai-btn.big{ width:100%; justify-content:center; padding:13px 0; font-size:13.5px; margin-top:6px; }
+
+  /* ---------- Quero Fazer ---------- */
+  ul.wtd{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:9px; }
+  li.wtd-item{
+    background: var(--surface); border-radius: 14px; box-shadow: var(--shadow-sm);
+    padding: 13px 14px; display:flex; flex-direction:column; gap:8px;
+  }
+  .wtd-top{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+  .wtd-title{ font-size:15px; font-weight:500; line-height:1.4; }
+  .wtd-desc{ font-size:12.5px; color: var(--ink-soft); margin-top:3px; line-height:1.5; }
+  .wtd-meta{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .status-pill{
+    font-size:11px; font-weight:600; padding: 5px 10px; border-radius:999px;
+    background: var(--surface-soft); color: var(--ink-soft); border:none;
+    font-family:'Work Sans', sans-serif; cursor:pointer;
+  }
+  .status-pill.s-quero{ background: var(--moss-soft); color: var(--moss-deep); }
+  .status-pill.s-consid{ background: var(--amber-soft); color:#6B4712; }
+  .status-pill.s-projeto{ background: var(--moss); color:white; }
+  .status-pill.s-concluido{ background: var(--surface-soft); color: var(--ink-faint); text-decoration: line-through; }
+  .status-pill.s-descartado{ background: var(--surface-soft); color: var(--ink-faint); }
+  .wtd-cat{ font-size:11px; color: var(--ink-faint); font-weight:600; }
+  .wtd-actions{ display:flex; gap:8px; margin-top:2px; }
+  .mini-btn{
+    border:none; background: var(--surface-soft); color: var(--ink-soft);
+    font-family:'Work Sans', sans-serif; font-size:11.5px; font-weight:600;
+    padding: 7px 11px; border-radius:10px; cursor:pointer;
+  }
+  .mini-btn.primary{ background: var(--moss); color:white; }
+  .mini-btn.danger:active{ color: var(--clay); }
+
+  /* ---------- Projetos ---------- */
+  ul.projects{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
+  li.project-card{
+    background: var(--surface); border-radius: 16px; box-shadow: var(--shadow-sm);
+    padding: 15px 16px; cursor:pointer;
+  }
+  li.project-card:active{ transform: scale(.99); }
+  .project-top{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:4px; }
+  .project-name{ font-size:15.5px; font-weight:600; }
+  .project-cat{ font-size:11px; color: var(--ink-faint); font-weight:600; margin-bottom:10px; }
+  .progress-row{ display:flex; align-items:center; gap:10px; }
+  .progress-bar-track{ flex:1; height:7px; background: var(--surface-soft); border-radius:999px; overflow:hidden; }
+  .progress-bar-fill{ height:100%; background: var(--moss); border-radius:999px; transition: width .3s ease; }
+  .progress-pct{ font-size:12px; font-weight:600; color: var(--ink-soft); width:34px; text-align:right; flex-shrink:0; }
+  .project-foot{ display:flex; gap:12px; margin-top:9px; font-size:12px; color: var(--ink-soft); }
+  .status-tag{ font-size:11px; font-weight:600; padding:4px 9px; border-radius:8px; background: var(--surface-soft); color: var(--ink-soft); }
+  .status-tag.ativo{ background: var(--moss-soft); color: var(--moss-deep); }
+  .status-tag.pausado{ background: var(--amber-soft); color:#6B4712; }
+  .status-tag.concluido{ background: var(--surface-soft); color: var(--ink-faint); }
+
+  /* ---------- Modal de detalhe (projeto / quero fazer) ---------- */
+  .detail-overlay{
+    position:fixed; inset:0; background: rgba(20,22,18,.42); z-index:40;
+    opacity:0; pointer-events:none; transition: opacity .2s ease;
+    display:flex; justify-content:center;
+  }
+  .detail-overlay.open{ opacity:1; pointer-events:auto; }
+  .detail-sheet{
+    width:100%; max-width:480px; background: var(--bg);
+    height:100%; overflow-y:auto;
+    transform: translateX(100%); transition: transform .28s cubic-bezier(.32,.72,0,1);
+    padding: 0 0 60px;
+  }
+  .detail-overlay.open .detail-sheet{ transform: translateX(0); }
+  .detail-head{
+    position:sticky; top:0; background: var(--bg);
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 18px 20px 10px; z-index:2;
+  }
+  .detail-back{
+    border:none; background: var(--surface); width:36px; height:36px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; box-shadow: var(--shadow-sm); cursor:pointer; color: var(--ink);
+  }
+  .detail-body{ padding: 6px 20px 20px; }
+  .detail-title-input{
+    width:100%; border:none; background:transparent; outline:none;
+    font-family:'Fraunces', serif; font-size:26px; font-weight:500;
+    font-variation-settings: 'opsz' 40; color: var(--ink); padding: 6px 0 12px; line-height:1.15;
+  }
+  .field-group{ margin-bottom:16px; }
+  .field-row2{ display:flex; gap:10px; }
+  .field-row2 .field-group{ flex:1; }
+  .detail-body input[type="text"], .detail-body input[type="date"], .detail-body input[type="number"],
+  .detail-body select, .detail-body textarea{
+    width:100%; border:none; background: var(--surface); border-radius:12px;
+    padding: 12px 13px; font-family:'Work Sans', sans-serif; font-size:14.5px; color: var(--ink);
+    outline:none; box-shadow: var(--shadow-sm); resize:vertical;
+  }
+  .detail-body textarea{ min-height:64px; line-height:1.5; }
+  .detail-body select{ appearance:none; -webkit-appearance:none; }
+
+  .steps-list{ list-style:none; margin: 8px 0 0; padding:0; display:flex; flex-direction:column; gap:7px; }
+  li.step-item{
+    display:flex; align-items:center; gap:10px; background: var(--surface);
+    border-radius:12px; padding: 10px 12px; box-shadow: var(--shadow-sm);
+  }
+  li.step-item.done .step-name{ color: var(--ink-faint); text-decoration: line-through; }
+  .step-check{
+    width:21px; height:21px; border-radius:6px; border: 1.5px solid var(--ink-faint);
+    flex-shrink:0; cursor:pointer; display:flex; align-items:center; justify-content:center; background:transparent;
+  }
+  .step-item.done .step-check{ background: var(--moss); border-color: var(--moss); }
+  .step-check svg{ opacity:0; transform:scale(.6); }
+  .step-item.done .step-check svg{ opacity:1; transform:scale(1); }
+  .step-name{ flex:1; font-size:14px; }
+  .step-remove{ border:none; background:none; color: var(--ink-faint); font-size:17px; cursor:pointer; padding:2px; }
+  .add-step-row{ display:flex; gap:8px; margin-top:9px; }
+  .add-step-row input{ flex:1; }
+  .add-step-btn{
+    border:none; background: var(--moss); color:white; width:38px; border-radius:10px; cursor:pointer; flex-shrink:0; font-size:18px;
+  }
+
+  .ai-panel{
+    background: var(--moss-soft); border-radius:14px; padding: 14px 15px; margin: 10px 0 16px;
+    font-size:13.5px; color: var(--moss-deep); line-height:1.6; white-space:pre-line;
+  }
+  .ai-panel .ai-title{ font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:.04em; margin-bottom:6px; opacity:.8; }
+  .ai-panel-actions{ display:flex; gap:8px; margin-top:12px; }
+  .ai-loading{ display:flex; align-items:center; gap:8px; font-size:13px; color: var(--ink-soft); padding: 10px 4px; }
+  .ai-dot{ width:6px; height:6px; border-radius:50%; background: var(--moss); animation: pulse 1s infinite ease-in-out; }
+  .ai-dot:nth-child(2){ animation-delay:.15s; } .ai-dot:nth-child(3){ animation-delay:.3s; }
+  @keyframes pulse{ 0%,100%{ opacity:.3; } 50%{ opacity:1; } }
+
+  .danger-zone{ margin-top: 26px; padding-top:16px; border-top:1px solid var(--line); }
+  .btn-delete{
+    border:none; background:none; color: var(--clay); font-family:'Work Sans', sans-serif;
+    font-size:13.5px; font-weight:600; cursor:pointer; padding:8px 0;
+  }
+
+  /* ---------- Semana ---------- */
+  .week-label{ font-size:12.5px; color: var(--ink-soft); margin: 2px 4px 14px; }
+  .week-card{ background: var(--surface); border-radius:16px; box-shadow: var(--shadow-sm); padding:16px; margin-bottom:12px; }
+  .week-card .wlabel{ display:flex; align-items:center; gap:7px; font-size:13px; font-weight:600; color: var(--ink); margin-bottom:10px; }
+  .priority-row{ display:flex; align-items:center; gap:9px; margin-bottom:8px; }
+  .priority-num{ width:20px; height:20px; border-radius:50%; background: var(--moss-soft); color: var(--moss-deep); font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .priority-row input{ flex:1; border:none; background: var(--surface-soft); border-radius:10px; padding:10px 11px; font-family:'Work Sans', sans-serif; font-size:14px; outline:none; }
+
+  /* ---------- Ação rápida (FAB) ---------- */
+  .quick-overlay{
+    position:fixed; inset:0; background: rgba(20,22,18,.42); z-index:35;
+    opacity:0; pointer-events:none; transition: opacity .2s ease; display:flex; justify-content:center; align-items:flex-end;
+  }
+  .quick-overlay.open{ opacity:1; pointer-events:auto; }
+  .quick-sheet{
+    width:100%; max-width:480px; background: var(--surface); border-radius:26px 26px 0 0;
+    padding: 10px 20px calc(20px + env(safe-area-inset-bottom));
+    transform: translateY(100%); transition: transform .26s cubic-bezier(.32,.72,0,1);
+  }
+  .quick-overlay.open .quick-sheet{ transform: translateY(0); }
+  .quick-opt{
+    display:flex; align-items:center; gap:14px; padding: 14px 6px; cursor:pointer; border-bottom:1px solid var(--line);
+  }
+  .quick-opt:last-child{ border-bottom:none; }
+  .quick-opt .ic{ width:38px; height:38px; border-radius:11px; background: var(--surface-soft); display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+  .quick-opt .txt{ font-size:14.5px; font-weight:500; }
+  .quick-opt .sub{ font-size:12px; color: var(--ink-soft); margin-top:1px; }
+
   @media (prefers-reduced-motion: reduce){
     *{ transition-duration: .01ms !important; animation-duration: .01ms !important; }
   }
@@ -564,7 +793,7 @@
 </head>
 <body>
 <div class="app" id="app">
-  <div class="loading" id="loading">carregando sua rotina…</div>
+  <div class="loading" id="loading">carregando seu painel…</div>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -649,14 +878,54 @@ let authMode = 'login';      // 'login' | 'signup'
 let authMsg = null;          // { type:'err'|'ok', text }
 let authBusy = false;
 
-let view = 'rotina';         // 'rotina' | 'agenda'
+let view = 'home';            // 'home' | 'rotina' | 'agenda' | 'wtd' | 'projects' | 'week'
 let sheetOpen = false;
+let sheetKind = null;         // 'task' | 'event' | 'wtd' | 'project'
 let selectedDate = todayKey();
 let selectedTime = '';
 
 let tasks = [];              // [{id, name}]
 let log = {};                // { '2026-09-03': { taskId: true } }
 let events = [];             // [{id, date, time, title}]
+
+// ---- Novas entidades (painel pessoal) ----
+let wantToDo = [];           // [{id,title,description,category,status,created_at}]
+let projects = [];           // [{id,name,objective,description,category,status,created_at,deadline,cost_estimated,cost_actual,notes}]
+let projectSteps = {};       // { projectId: [{id,name,done,position}] }
+let weeklyPlans = {};        // { 'YYYY-W##': {priorities:[3], financial_goal, personal_goal, learn_goal, do_goal, self_goal} }
+
+let quickOpen = false;                 // menu rápido do FAB (+)
+let detailOpen = false;                // modal de detalhe
+let detailKind = null;                 // 'project' | 'wtd'
+let detailId = null;
+let newStepDraft = '';
+let aiState = { loading:false, kind:null, forId:null, suggestion:null }; // suggestion: texto ou objeto conforme o caso
+
+const WTD_CATEGORIES = ['pessoal','aprendizado','viagem','saúde','financeiro','lazer','outro'];
+const WTD_STATUS = [
+  { v:'quero', label:'quero fazer' },
+  { v:'consid', label:'em consideração' },
+  { v:'projeto', label:'virou projeto' },
+  { v:'concluido', label:'concluído' },
+  { v:'descartado', label:'descartado' },
+];
+const PROJECT_CATEGORIES = ['renda extra','casa','carreira','saúde','aprendizado','viagem','financeiro','outro'];
+const PROJECT_STATUS = [
+  { v:'ativo', label:'ativo' },
+  { v:'pausado', label:'pausado' },
+  { v:'concluido', label:'concluído' },
+];
+
+function weekKey(d = new Date()){
+  const dt = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  const dayNum = (dt.getUTCDay() + 6) % 7;
+  dt.setUTCDate(dt.getUTCDate() - dayNum + 3);
+  const firstThursday = new Date(Date.UTC(dt.getUTCFullYear(),0,4));
+  const week = 1 + Math.round(((dt - firstThursday) / 86400000 - 3 + (firstThursday.getUTCDay()+6)%7) / 7);
+  return `${dt.getUTCFullYear()}-W${String(week).padStart(2,'0')}`;
+}
+function emptyWeek(){ return { priorities:['','',''], financial_goal:'', personal_goal:'', learn_goal:'', do_goal:'', self_goal:'' }; }
+function currentWeek(){ const k = weekKey(); if(!weeklyPlans[k]) weeklyPlans[k] = emptyWeek(); return weeklyPlans[k]; }
 
 /* ============================================================
    4. BACKEND
@@ -672,6 +941,10 @@ const localBackend = {
     tasks  = this.read('rotina.tasks', []);
     log    = this.read('rotina.log', {});
     events = this.read('rotina.events', []);
+    wantToDo = this.read('rotina.wtd', []);
+    projects = this.read('rotina.projects', []);
+    projectSteps = this.read('rotina.steps', {});
+    weeklyPlans = this.read('rotina.weeks', {});
   },
   async addTask(name){
     const t = { id: uid('t'), name };
@@ -695,16 +968,80 @@ const localBackend = {
   async removeEvent(id){
     events = events.filter(e => e.id !== id);
     this.write('rotina.events', events);
+  },
+
+  // ---- Quero Fazer ----
+  async addWtd(item){
+    const it = { id: uid('w'), description:'', category:'pessoal', status:'quero', created_at:new Date().toISOString(), ...item };
+    wantToDo.unshift(it);
+    this.write('rotina.wtd', wantToDo);
+    return it;
+  },
+  async updateWtd(id, patch){
+    wantToDo = wantToDo.map(w => w.id === id ? { ...w, ...patch } : w);
+    this.write('rotina.wtd', wantToDo);
+  },
+  async removeWtd(id){
+    wantToDo = wantToDo.filter(w => w.id !== id);
+    this.write('rotina.wtd', wantToDo);
+  },
+
+  // ---- Projetos ----
+  async addProject(p){
+    const proj = { id: uid('p'), objective:'', description:'', category:'outro', status:'ativo',
+      created_at:new Date().toISOString(), deadline:'', cost_estimated:null, cost_actual:null, notes:'', ...p };
+    projects.unshift(proj);
+    projectSteps[proj.id] = [];
+    this.write('rotina.projects', projects);
+    this.write('rotina.steps', projectSteps);
+    return proj;
+  },
+  async updateProject(id, patch){
+    projects = projects.map(p => p.id === id ? { ...p, ...patch } : p);
+    this.write('rotina.projects', projects);
+  },
+  async removeProject(id){
+    projects = projects.filter(p => p.id !== id);
+    delete projectSteps[id];
+    this.write('rotina.projects', projects);
+    this.write('rotina.steps', projectSteps);
+  },
+  async addStep(projectId, name){
+    const st = { id: uid('s'), name, done:false, position:(projectSteps[projectId]||[]).length };
+    if(!projectSteps[projectId]) projectSteps[projectId] = [];
+    projectSteps[projectId].push(st);
+    this.write('rotina.steps', projectSteps);
+    return st;
+  },
+  async toggleStep(projectId, stepId, done){
+    const list = projectSteps[projectId] || [];
+    const s = list.find(s => s.id === stepId);
+    if(s) s.done = done;
+    this.write('rotina.steps', projectSteps);
+  },
+  async removeStep(projectId, stepId){
+    projectSteps[projectId] = (projectSteps[projectId]||[]).filter(s => s.id !== stepId);
+    this.write('rotina.steps', projectSteps);
+  },
+
+  // ---- Semana ----
+  async saveWeek(key, data){
+    weeklyPlans[key] = data;
+    this.write('rotina.weeks', weeklyPlans);
   }
 };
 
 const supabaseBackend = {
   cloud: true,
   async load(){
-    const [tRes, lRes, eRes] = await Promise.all([
+    const [tRes, lRes, eRes, wRes, pRes, sRes, wkRes] = await Promise.all([
       sb.from('tasks').select('id,name,position,created_at').order('position').order('created_at'),
       sb.from('task_logs').select('task_id,day').gte('day', lastNDays(60)[0]),
-      sb.from('events').select('id,title,event_date,event_time').order('event_date').order('event_time')
+      sb.from('events').select('id,title,event_date,event_time').order('event_date').order('event_time'),
+      sb.from('want_to_do').select('*').order('created_at', { ascending:false }),
+      sb.from('projects').select('*').order('created_at', { ascending:false }),
+      sb.from('project_steps').select('*').order('position'),
+      sb.from('weekly_plans').select('*')
     ]);
     if(tRes.error || lRes.error || eRes.error){
       throw (tRes.error || lRes.error || eRes.error);
@@ -721,6 +1058,33 @@ const supabaseBackend = {
       date: r.event_date,
       time: r.event_time ? String(r.event_time).slice(0,5) : ''
     }));
+
+    // Tabelas novas: se ainda não existirem no banco, seguimos com listas vazias
+    // em vez de quebrar o app (assim dá pra rodar o SQL depois, com calma).
+    wantToDo = wRes.error ? [] : wRes.data;
+    projects = pRes.error ? [] : pRes.data;
+    projectSteps = {};
+    if(!sRes.error){
+      sRes.data.forEach(s => {
+        if(!projectSteps[s.project_id]) projectSteps[s.project_id] = [];
+        projectSteps[s.project_id].push({ id: s.id, name: s.name, done: s.done, position: s.position });
+      });
+    }
+    weeklyPlans = {};
+    if(!wkRes.error){
+      wkRes.data.forEach(w => {
+        weeklyPlans[w.week_key] = {
+          priorities: w.priorities || ['','',''],
+          financial_goal: w.financial_goal || '',
+          personal_goal: w.personal_goal || '',
+          learn_goal: w.learn_goal || '',
+          do_goal: w.do_goal || '',
+          self_goal: w.self_goal || ''
+        };
+      });
+    }
+    if(wRes.error) console.warn('want_to_do: rode o SQL novo no Supabase.', wRes.error.message);
+    if(pRes.error) console.warn('projects: rode o SQL novo no Supabase.', pRes.error.message);
   },
   async addTask(name){
     const { data, error } = await sb.from('tasks')
@@ -766,6 +1130,86 @@ const supabaseBackend = {
     events = events.filter(e => e.id !== id);
     const { error } = await sb.from('events').delete().eq('id', id);
     if(error){ events = before; throw error; }
+  },
+
+  // ---- Quero Fazer ----
+  async addWtd(item){
+    const row = { title:item.title, description:item.description||'', category:item.category||'pessoal', status:item.status||'quero' };
+    const { data, error } = await sb.from('want_to_do').insert(row).select('*').single();
+    if(error) throw error;
+    wantToDo.unshift(data);
+    return data;
+  },
+  async updateWtd(id, patch){
+    const before = wantToDo;
+    wantToDo = wantToDo.map(w => w.id === id ? { ...w, ...patch } : w);
+    const { error } = await sb.from('want_to_do').update(patch).eq('id', id);
+    if(error){ wantToDo = before; throw error; }
+  },
+  async removeWtd(id){
+    const before = wantToDo;
+    wantToDo = wantToDo.filter(w => w.id !== id);
+    const { error } = await sb.from('want_to_do').delete().eq('id', id);
+    if(error){ wantToDo = before; throw error; }
+  },
+
+  // ---- Projetos ----
+  async addProject(p){
+    const row = {
+      name:p.name, objective:p.objective||'', description:p.description||'', category:p.category||'outro',
+      status:p.status||'ativo', deadline:p.deadline||null, cost_estimated:p.cost_estimated||null,
+      cost_actual:p.cost_actual||null, notes:p.notes||''
+    };
+    const { data, error } = await sb.from('projects').insert(row).select('*').single();
+    if(error) throw error;
+    projects.unshift(data);
+    projectSteps[data.id] = [];
+    return data;
+  },
+  async updateProject(id, patch){
+    const before = projects;
+    projects = projects.map(p => p.id === id ? { ...p, ...patch } : p);
+    const { error } = await sb.from('projects').update(patch).eq('id', id);
+    if(error){ projects = before; throw error; }
+  },
+  async removeProject(id){
+    const before = projects;
+    projects = projects.filter(p => p.id !== id);
+    delete projectSteps[id];
+    const { error } = await sb.from('projects').delete().eq('id', id);
+    if(error){ projects = before; throw error; }
+  },
+  async addStep(projectId, name){
+    const position = (projectSteps[projectId]||[]).length;
+    const { data, error } = await sb.from('project_steps')
+      .insert({ project_id: projectId, name, done:false, position }).select('*').single();
+    if(error) throw error;
+    if(!projectSteps[projectId]) projectSteps[projectId] = [];
+    const st = { id:data.id, name:data.name, done:data.done, position:data.position };
+    projectSteps[projectId].push(st);
+    return st;
+  },
+  async toggleStep(projectId, stepId, done){
+    const list = projectSteps[projectId] || [];
+    const s = list.find(s => s.id === stepId);
+    if(s) s.done = done;
+    const { error } = await sb.from('project_steps').update({ done }).eq('id', stepId);
+    if(error) throw error;
+  },
+  async removeStep(projectId, stepId){
+    projectSteps[projectId] = (projectSteps[projectId]||[]).filter(s => s.id !== stepId);
+    const { error } = await sb.from('project_steps').delete().eq('id', stepId);
+    if(error) throw error;
+  },
+
+  // ---- Semana ----
+  async saveWeek(key, data){
+    weeklyPlans[key] = data;
+    const { error } = await sb.from('weekly_plans').upsert({
+      week_key:key, priorities:data.priorities, financial_goal:data.financial_goal,
+      personal_goal:data.personal_goal, learn_goal:data.learn_goal, do_goal:data.do_goal, self_goal:data.self_goal
+    }, { onConflict:'user_id,week_key' });
+    if(error) throw error;
   }
 };
 
@@ -811,7 +1255,7 @@ async function signUp(email, password){
 async function signOut(){
   await sb.auth.signOut();
   session = null;
-  tasks = []; log = {}; events = [];
+  tasks = []; log = {}; events = []; wantToDo = []; projects = []; projectSteps = {}; weeklyPlans = {};
   screen = 'auth';
   authMode = 'login';
   authMsg = null;
@@ -828,7 +1272,172 @@ function authErrorText(err){
 }
 
 /* ============================================================
-   7. RENDER
+   7. IA — assistente de planejamento pessoal
+   ------------------------------------------------------------
+   A IA NUNCA decide nada sozinha: ela só sugere, e o usuário
+   aceita, edita ou ignora. Nada é salvo sem confirmação.
+
+   SEGURANÇA: nenhuma chave de API de IA fica aqui no navegador.
+   AI_ENDPOINT deve apontar para uma função server-side sua
+   (ex: Supabase Edge Function, Vercel Function, Cloudflare Worker)
+   que guarda a chave real e repassa a chamada para o provedor de IA.
+
+   Contrato esperado do endpoint:
+     POST { kind: 'project_plan' | 'week_plan' | 'priority', payload }
+     → 200 { result: {...} }  (o formato de "result" varia por kind,
+       ver os três blocos abaixo)
+
+   Enquanto AI_ENDPOINT não estiver configurado, o app usa um
+   gerador local simples (heurística, não é IA de verdade) só
+   para a experiência não ficar quebrada em desenvolvimento.
+   ============================================================ */
+const AI_ENDPOINT = ''; // DEVELOPMENT ONLY: deixe vazio para usar o gerador local. Ex: 'https://SEU-PROJETO.functions.supabase.co/ai-assistant'
+
+async function callAI(kind, payload){
+  if(AI_ENDPOINT){
+    const res = await fetch(AI_ENDPOINT, {
+      method:'POST',
+      headers: { 'Content-Type':'application/json' },
+      body: JSON.stringify({ kind, payload })
+    });
+    if(!res.ok) throw new Error('IA indisponível no momento.');
+    const data = await res.json();
+    return data.result;
+  }
+  await new Promise(r => setTimeout(r, 550)); // simula latência
+  return localAiFallback(kind, payload);
+}
+
+function localAiFallback(kind, payload){
+  if(kind === 'project_plan'){
+    const name = (payload.name || '').trim();
+    return {
+      objective: `Avançar de forma consistente em "${name}" até ter um resultado concreto e visível.`,
+      steps: [
+        'Definir claramente o que significa "concluído" aqui',
+        'Levantar o que já tenho disponível para começar',
+        'Quebrar em 3 a 5 blocos de trabalho pequenos',
+        'Reservar um horário fixo na semana para avançar',
+        'Fazer a primeira etapa, mesmo que pequena',
+        'Revisar o progresso e ajustar o plano'
+      ]
+    };
+  }
+  if(kind === 'week_plan'){
+    const activeProjects = projects.filter(p => p.status === 'ativo').slice(0,2);
+    const pending = activeProjects.map(p => `Avançar 1 etapa de "${p.name}"`);
+    while(pending.length < 3){
+      const idea = wantToDo.find(w => w.status === 'quero');
+      pending.push(idea ? `Explorar "${idea.title}"` : 'Cuidar de algo pendente da rotina');
+    }
+    return {
+      priorities: pending.slice(0,3),
+      financial_goal: '',
+      personal_goal: 'Cuidar do corpo pelo menos 3x',
+      learn_goal: '',
+      do_goal: '',
+      self_goal: 'Ter uma pausa de verdade em algum momento'
+    };
+  }
+  if(kind === 'priority'){
+    const active = projects.filter(p => p.status === 'ativo');
+    if(active.length === 0){
+      return `Você ainda não tem projetos ativos. Que tal escolher 1 item de "Quero Fazer" e transformá-lo em projeto? É mais fácil priorizar quando existe algo concreto em andamento.`;
+    }
+    const withProgress = active.map(p => {
+      const steps = projectSteps[p.id] || [];
+      const done = steps.filter(s => s.done).length;
+      const pct = steps.length ? Math.round((done/steps.length)*100) : 0;
+      return { p, pct, steps: steps.length };
+    }).sort((a,b) => b.pct - a.pct);
+
+    let text = `Você está tentando avançar em ${active.length} projeto${active.length>1?'s':''} ao mesmo tempo.\n\nMinha sugestão:\n\n`;
+    withProgress.forEach((item, i) => {
+      const reason = item.pct >= 50 ? 'já está mais avançado, vale terminar primeiro'
+        : item.steps === 0 ? 'ainda não tem etapas definidas — comece por aí'
+        : 'está no meio do caminho, dá pra avançar em blocos pequenos';
+      text += `${i+1}. ${item.p.name}\n   ${reason}.\n\n`;
+    });
+    text += `Para esta semana, eu focaria no primeiro da lista e trataria os demais como "se sobrar tempo".`;
+    return text;
+  }
+  return '';
+}
+
+async function runProjectAI(projectId){
+  const p = projects.find(p => p.id === projectId);
+  if(!p) return;
+  aiState = { loading:true, kind:'project_plan', forId:projectId, suggestion:null };
+  render();
+  try{
+    const result = await callAI('project_plan', { name:p.name, objective:p.objective, category:p.category, description:p.description });
+    aiState = { loading:false, kind:'project_plan', forId:projectId, suggestion:result };
+  }catch(e){
+    aiState = { loading:false, kind:null, forId:null, suggestion:null };
+    toast('a IA não respondeu. tente de novo em instantes.');
+  }
+  render();
+}
+async function acceptProjectAI(){
+  if(!aiState.suggestion || aiState.kind !== 'project_plan') return;
+  const projectId = aiState.forId;
+  const sug = aiState.suggestion;
+  try{
+    if(sug.objective){
+      await backend.updateProject(projectId, { objective: sug.objective });
+    }
+    for(const stepName of (sug.steps || [])){
+      await backend.addStep(projectId, stepName);
+    }
+  }catch(e){ toast('não deu para aplicar tudo. tente de novo.'); }
+  aiState = { loading:false, kind:null, forId:null, suggestion:null };
+  render();
+}
+
+async function runWeekAI(){
+  aiState = { loading:true, kind:'week_plan', forId:null, suggestion:null };
+  render();
+  try{
+    const result = await callAI('week_plan', {
+      projects: projects.filter(p=>p.status==='ativo').map(p=>({ name:p.name, steps:(projectSteps[p.id]||[]).filter(s=>!s.done).length })),
+      wantToDo: wantToDo.filter(w=>w.status==='quero').map(w=>w.title)
+    });
+    aiState = { loading:false, kind:'week_plan', forId:null, suggestion:result };
+  }catch(e){
+    aiState = { loading:false, kind:null, forId:null, suggestion:null };
+    toast('a IA não respondeu. tente de novo em instantes.');
+  }
+  render();
+}
+async function acceptWeekAI(){
+  if(!aiState.suggestion || aiState.kind !== 'week_plan') return;
+  const sug = aiState.suggestion;
+  const key = weekKey();
+  const merged = { ...emptyWeek(), ...currentWeek(), ...sug, priorities: sug.priorities || currentWeek().priorities };
+  try{ await backend.saveWeek(key, merged); }catch(e){ toast('não deu para salvar a semana.'); }
+  aiState = { loading:false, kind:null, forId:null, suggestion:null };
+  render();
+}
+
+async function runPriorityAI(){
+  aiState = { loading:true, kind:'priority', forId:null, suggestion:null };
+  render();
+  try{
+    const result = await callAI('priority', {
+      projects: projects.map(p => ({ name:p.name, status:p.status, steps:(projectSteps[p.id]||[]).length, done:(projectSteps[p.id]||[]).filter(s=>s.done).length })),
+      wantToDoCount: wantToDo.filter(w=>w.status==='quero').length
+    });
+    aiState = { loading:false, kind:'priority', forId:null, suggestion:result };
+  }catch(e){
+    aiState = { loading:false, kind:null, forId:null, suggestion:null };
+    toast('a IA não respondeu. tente de novo em instantes.');
+  }
+  render();
+}
+function dismissAI(){ aiState = { loading:false, kind:null, forId:null, suggestion:null }; render(); }
+
+/* ============================================================
+   8. RENDER
    ============================================================ */
 const emptyGlyph = `<svg class="glyph" viewBox="0 0 40 40" fill="none"><rect x="7" y="9" width="26" height="24" rx="5" stroke="currentColor" stroke-width="1.6"/><path d="M7 16h26" stroke="currentColor" stroke-width="1.6"/><path d="M14 5v6M26 5v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
 
@@ -873,6 +1482,15 @@ function renderAuth(){
   `;
 }
 
+const TABS = [
+  { v:'home', label:'visão' },
+  { v:'rotina', label:'rotina' },
+  { v:'agenda', label:'agenda' },
+  { v:'wtd', label:'quero fazer' },
+  { v:'projects', label:'projetos' },
+  { v:'week', label:'semana' },
+];
+
 function renderHeader(){
   const now = new Date();
   const doneCount = tasks.filter(t => isDone(t.id)).length;
@@ -892,23 +1510,38 @@ function renderHeader(){
         <div class="account-row">
           <span class="account-mail">salvando só neste navegador</span>
         </div>`}
-      <p class="day-label">${DIAS[now.getDay()]}</p>
-      <p class="date-sub">${now.getDate()} de ${MESES[now.getMonth()]}</p>
-      <div class="progress-card">
-        <svg class="ring" viewBox="0 0 44 44">
-          <circle cx="22" cy="22" r="${r}" fill="none" stroke="var(--line)" stroke-width="4"/>
-          <circle cx="22" cy="22" r="${r}" fill="none" stroke="var(--moss)" stroke-width="4"
-            stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${offset}"
-            transform="rotate(-90 22 22)"/>
-        </svg>
-        <p class="progress-text">${ total ? `<strong>${doneCount} de ${total}</strong> feitas hoje` : 'adicione sua primeira tarefa' }</p>
-      </div>
-      <div class="tabs">
-        <button data-view="rotina" class="${view==='rotina' ? 'active' : ''}">rotina</button>
-        <button data-view="agenda" class="${view==='agenda' ? 'active' : ''}">agenda</button>
+      ${ view === 'home' ? `
+        <p class="home-greeting">${greetingWord()}</p>
+        <p class="home-date">${DIAS[now.getDay()]}, ${now.getDate()} de ${MESES[now.getMonth()]}</p>
+      ` : `
+        <p class="day-label">${DIAS[now.getDay()]}</p>
+        <p class="date-sub">${now.getDate()} de ${MESES[now.getMonth()]}</p>
+      `}
+      ${ view === 'rotina' ? `
+        <div class="progress-card">
+          <svg class="ring" viewBox="0 0 44 44">
+            <circle cx="22" cy="22" r="${r}" fill="none" stroke="var(--line)" stroke-width="4"/>
+            <circle cx="22" cy="22" r="${r}" fill="none" stroke="var(--moss)" stroke-width="4"
+              stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${offset}"
+              transform="rotate(-90 22 22)"/>
+          </svg>
+          <p class="progress-text">${ total ? `<strong>${doneCount} de ${total}</strong> feitas hoje` : 'adicione sua primeira tarefa' }</p>
+        </div>
+      ` : ''}
+      <div class="tabs-scroll">
+        <div class="tabs">
+          ${TABS.map(t => `<button data-view="${t.v}" class="${view===t.v ? 'active' : ''}">${t.label}</button>`).join('')}
+        </div>
       </div>
     </header>
   `;
+}
+function greetingWord(){
+  const h = new Date().getHours();
+  if(h < 5) return 'boa madrugada';
+  if(h < 12) return 'bom dia';
+  if(h < 18) return 'boa tarde';
+  return 'boa noite';
 }
 
 function renderRotina(){
@@ -985,8 +1618,233 @@ function renderAgenda(){
   `).join('');
 }
 
+/* ---------- Visão da Vida (home) ---------- */
+function renderHome(){
+  const activeProjects = projects.filter(p => p.status === 'ativo');
+  const attention = activeProjects.filter(p => {
+    const steps = projectSteps[p.id] || [];
+    return steps.length === 0 || (p.deadline && p.deadline < todayKey());
+  });
+  const ideasCount = wantToDo.filter(w => w.status === 'quero' || w.status === 'consid').length;
+  const turnedIntoProjects = wantToDo.filter(w => w.status === 'projeto').length;
+  const wk = currentWeek();
+  const filledGoals = ['financial_goal','personal_goal','learn_goal','do_goal','self_goal'].filter(k => wk[k]).length + wk.priorities.filter(Boolean).length;
+  const totalGoals = 5 + 3;
+  const weekPct = totalGoals ? Math.round((filledGoals/totalGoals)*100) : 0;
+  const focus = activeProjects[0];
+
+  return `
+    <div class="ai-hero" id="priority-ai-btn">
+      <p class="label">✨ IA</p>
+      <p class="q">O que devo priorizar?</p>
+      <p class="hint">toque para uma sugestão rápida com base nos seus projetos</p>
+    </div>
+    ${renderAiInline('priority')}
+
+    <div class="home-grid" style="margin-top:16px;">
+      <div class="home-card" data-view="projects">
+        <div class="ic">🗺️</div>
+        <div class="body">
+          <div class="title">Projetos</div>
+          <div class="sub">${activeProjects.length} ativo${activeProjects.length!==1?'s':''}${attention.length ? ` · ${attention.length} precisando de atenção` : ''}</div>
+        </div>
+        <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+      <div class="home-card" data-view="wtd">
+        <div class="ic">🧠</div>
+        <div class="body">
+          <div class="title">Quero Fazer</div>
+          <div class="sub">${ideasCount} ideia${ideasCount!==1?'s':''}${turnedIntoProjects ? ` · ${turnedIntoProjects} viraram projeto` : ''}</div>
+        </div>
+        <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+      <div class="home-card" data-view="week">
+        <div class="ic">📆</div>
+        <div class="body">
+          <div class="title">Esta semana</div>
+          <div class="sub">${weekPct}% planejada</div>
+        </div>
+        <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+      ${ focus ? `
+      <div class="home-card" data-project-open="${focus.id}">
+        <div class="ic">🎯</div>
+        <div class="body">
+          <div class="title">Foco atual</div>
+          <div class="sub">${escapeHtml(focus.name)}</div>
+        </div>
+        <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>` : ''}
+    </div>
+  `;
+}
+
+function renderAiInline(kind){
+  if(aiState.loading && aiState.kind === kind){
+    return `<div class="ai-loading"><span class="ai-dot"></span><span class="ai-dot"></span><span class="ai-dot"></span> pensando…</div>`;
+  }
+  if(aiState.suggestion && aiState.kind === kind){
+    if(kind === 'priority'){
+      return `
+        <div class="ai-panel">
+          <p class="ai-title">Sugestão</p>${escapeHtml(aiState.suggestion)}
+          <div class="ai-panel-actions">
+            <button class="mini-btn" id="ai-dismiss">ok, entendi</button>
+          </div>
+        </div>`;
+    }
+    if(kind === 'week_plan'){
+      const s = aiState.suggestion;
+      return `
+        <div class="ai-panel">
+          <p class="ai-title">Sugestão de semana</p>
+          ${s.priorities.map((p,i)=>`${i+1}. ${escapeHtml(p)}`).join('\n')}
+          ${s.personal_goal ? `\n🏃 ${escapeHtml(s.personal_goal)}` : ''}
+          ${s.self_goal ? `\n❤️ ${escapeHtml(s.self_goal)}` : ''}
+          <div class="ai-panel-actions">
+            <button class="mini-btn" id="ai-dismiss">ignorar</button>
+            <button class="mini-btn primary" id="ai-accept-week">usar esta semana</button>
+          </div>
+        </div>`;
+    }
+  }
+  return '';
+}
+
+/* ---------- Quero Fazer ---------- */
+function renderWantToDo(){
+  return `
+    <div class="section-top">
+      <span class="section-hint" style="margin:0;">coisas que você gostaria de fazer, sem compromisso</span>
+    </div>
+    ${wantToDo.length === 0 ? `
+      <div class="empty-state">
+        ${emptyGlyph}
+        <p>Nada por aqui ainda.<br>Toque no + e registre algo que você quer fazer, ver, aprender ou conquistar.</p>
+      </div>
+    ` : `
+      <ul class="wtd">
+        ${wantToDo.map(w => `
+          <li class="wtd-item" data-id="${w.id}">
+            <div class="wtd-top">
+              <div>
+                <div class="wtd-title">${escapeHtml(w.title)}</div>
+                ${w.description ? `<div class="wtd-desc">${escapeHtml(w.description)}</div>` : ''}
+              </div>
+              <button class="item-remove" data-action="remove-wtd" data-id="${w.id}" aria-label="remover">&times;</button>
+            </div>
+            <div class="wtd-meta">
+              <span class="wtd-cat">${escapeHtml(w.category || 'pessoal')}</span>
+              <select class="status-pill s-${statusClass(w.status)}" data-action="wtd-status" data-id="${w.id}">
+                ${WTD_STATUS.map(s => `<option value="${s.v}" ${w.status===s.v?'selected':''}>${s.label}</option>`).join('')}
+              </select>
+            </div>
+            ${w.status !== 'projeto' && w.status !== 'concluido' && w.status !== 'descartado' ? `
+              <div class="wtd-actions">
+                <button class="mini-btn primary" data-action="wtd-to-project" data-id="${w.id}">virar projeto</button>
+              </div>
+            ` : ''}
+          </li>
+        `).join('')}
+      </ul>
+    `}
+  `;
+}
+function statusClass(v){
+  return { quero:'quero', consid:'consid', projeto:'projeto', concluido:'concluido', descartado:'descartado' }[v] || 'quero';
+}
+
+/* ---------- Projetos ---------- */
+function renderProjects(){
+  return `
+    <div class="section-top">
+      <span class="section-hint" style="margin:0;">coisas que você decidiu realmente executar</span>
+    </div>
+    ${projects.length === 0 ? `
+      <div class="empty-state">
+        ${emptyGlyph}
+        <p>Nenhum projeto ainda.<br>Toque no + para começar um, ou transforme uma ideia de "Quero Fazer".</p>
+      </div>
+    ` : `
+      <ul class="projects">
+        ${projects.map(p => {
+          const steps = projectSteps[p.id] || [];
+          const done = steps.filter(s => s.done).length;
+          const pct = steps.length ? Math.round((done/steps.length)*100) : 0;
+          return `
+            <li class="project-card" data-project-open="${p.id}">
+              <div class="project-top">
+                <div class="project-name">${escapeHtml(p.name)}</div>
+                <span class="status-tag ${p.status}">${p.status}</span>
+              </div>
+              <div class="project-cat">${escapeHtml(p.category || 'outro')}</div>
+              <div class="progress-row">
+                <div class="progress-bar-track"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+                <div class="progress-pct">${pct}%</div>
+              </div>
+              <div class="project-foot">
+                <span>${steps.length ? `${done}/${steps.length} etapas` : 'sem etapas ainda'}</span>
+                ${p.deadline ? `<span>até ${formatDatePt(p.deadline)}</span>` : ''}
+              </div>
+            </li>
+          `;
+        }).join('')}
+      </ul>
+    `}
+  `;
+}
+function formatDatePt(key){
+  const d = parseKey(key);
+  return `${d.getDate()} de ${MESES[d.getMonth()]}`;
+}
+
+/* ---------- Semana ---------- */
+function renderWeek(){
+  const key = weekKey();
+  const wk = currentWeek();
+  return `
+    <p class="week-label">planejamento de ${key.replace('-W',' · semana ')}</p>
+
+    <button class="ai-btn big" id="week-ai-btn">✨ organizar minha semana</button>
+    ${renderAiInline('week_plan')}
+
+    <div class="week-card">
+      <div class="wlabel">🎯 3 prioridades da semana</div>
+      ${[0,1,2].map(i => `
+        <div class="priority-row">
+          <span class="priority-num">${i+1}</span>
+          <input type="text" data-week-field="priorities" data-idx="${i}" value="${escapeHtml(wk.priorities[i]||'')}" placeholder="prioridade ${i+1}" maxlength="80"/>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="week-card">
+      <div class="wlabel">💰 meta financeira</div>
+      <input type="text" data-week-field="financial_goal" value="${escapeHtml(wk.financial_goal)}" placeholder="ex: economizar R$ 200" maxlength="60"/>
+    </div>
+    <div class="week-card">
+      <div class="wlabel">🏃 meta pessoal</div>
+      <input type="text" data-week-field="personal_goal" value="${escapeHtml(wk.personal_goal)}" placeholder="ex: treinar 3 vezes" maxlength="60"/>
+    </div>
+    <div class="week-card">
+      <div class="wlabel">📚 algo que quero aprender</div>
+      <input type="text" data-week-field="learn_goal" value="${escapeHtml(wk.learn_goal)}" placeholder="ex: estudar inglês" maxlength="60"/>
+    </div>
+    <div class="week-card">
+      <div class="wlabel">🎮 algo que quero fazer</div>
+      <input type="text" data-week-field="do_goal" value="${escapeHtml(wk.do_goal)}" placeholder="ex: jogar no sábado" maxlength="60"/>
+    </div>
+    <div class="week-card">
+      <div class="wlabel">❤️ algo para mim</div>
+      <input type="text" data-week-field="self_goal" value="${escapeHtml(wk.self_goal)}" placeholder="ex: ter uma noite livre" maxlength="60"/>
+    </div>
+  `;
+}
+
 function renderSheet(){
-  if(view === 'rotina'){
+  if(!sheetKind) return '';
+
+  if(sheetKind === 'task'){
     return `
       <div class="sheet-overlay ${sheetOpen ? 'open' : ''}" id="sheet-overlay">
         <div class="sheet" id="sheet">
@@ -1002,6 +1860,43 @@ function renderSheet(){
     `;
   }
 
+  if(sheetKind === 'wtd'){
+    return `
+      <div class="sheet-overlay ${sheetOpen ? 'open' : ''}" id="sheet-overlay">
+        <div class="sheet" id="sheet">
+          <div class="sheet-handle"></div>
+          <p class="sheet-title">quero fazer</p>
+          <form id="add-form">
+            <span class="field-label">o que você gostaria de fazer?</span>
+            <input type="text" id="new-wtd-title" placeholder="ex: aprender inglês, comprar uma câmera…" autocomplete="off" maxlength="80"/>
+            <span class="field-label">categoria</span>
+            <div class="time-row" style="margin-bottom:22px;">
+              ${WTD_CATEGORIES.map(c => `<button type="button" class="time-chip ${c==='pessoal'?'selected':''}" data-cat="${c}">${c}</button>`).join('')}
+            </div>
+            <button type="submit" class="sheet-submit" id="submit-btn" disabled>adicionar</button>
+          </form>
+        </div>
+      </div>
+    `;
+  }
+
+  if(sheetKind === 'project'){
+    return `
+      <div class="sheet-overlay ${sheetOpen ? 'open' : ''}" id="sheet-overlay">
+        <div class="sheet" id="sheet">
+          <div class="sheet-handle"></div>
+          <p class="sheet-title">novo projeto</p>
+          <form id="add-form">
+            <span class="field-label">nome do projeto</span>
+            <input type="text" id="new-project-name" placeholder="ex: nova fonte de renda, aprender inglês…" autocomplete="off" maxlength="80"/>
+            <button type="submit" class="sheet-submit" id="submit-btn" disabled>criar e detalhar</button>
+          </form>
+        </div>
+      </div>
+    `;
+  }
+
+  // sheetKind === 'event'
   const days = nextNDays(21);
   const quickTimes = [
     { label: 'manhã', value: '09:00' },
@@ -1046,17 +1941,174 @@ function renderSheet(){
   `;
 }
 
-function openSheet(){
+function renderQuickMenu(){
+  const options = [
+    { kind:'wtd', ic:'🧠', txt:'Quero Fazer', sub:'uma ideia ou desejo, sem prazo' },
+    { kind:'project', ic:'🗺️', txt:'Projeto', sub:'algo que você decidiu executar' },
+    { kind:'event', ic:'📆', txt:'Compromisso', sub:'agenda, dia e horário' },
+    { kind:'task', ic:'📋', txt:'Tarefa', sub:'rotina de repetir todo dia' },
+  ];
+  return `
+    <div class="quick-overlay ${quickOpen ? 'open' : ''}" id="quick-overlay">
+      <div class="quick-sheet" id="quick-sheet">
+        <div class="sheet-handle"></div>
+        ${options.map(o => `
+          <div class="quick-opt" data-quick="${o.kind}">
+            <div class="ic">${o.ic}</div>
+            <div>
+              <div class="txt">${o.txt}</div>
+              <div class="sub">${o.sub}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function renderDetailModal(){
+  if(!detailOpen || detailKind !== 'project' || !detailId) return '';
+  const p = projects.find(p => p.id === detailId);
+  if(!p) return '';
+  const steps = (projectSteps[p.id] || []);
+  const done = steps.filter(s => s.done).length;
+  const pct = steps.length ? Math.round((done/steps.length)*100) : 0;
+  const showAi = aiState.kind === 'project_plan' && aiState.forId === p.id;
+
+  return `
+    <div class="detail-overlay ${detailOpen ? 'open' : ''}" id="detail-overlay">
+      <div class="detail-sheet" id="detail-sheet">
+        <div class="detail-head">
+          <button class="detail-back" id="detail-close" aria-label="fechar">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 5L9 12L15 19" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <span class="status-tag ${p.status}">${p.status}</span>
+        </div>
+        <div class="detail-body">
+          <input class="detail-title-input" id="proj-name" value="${escapeHtml(p.name)}" maxlength="80" placeholder="nome do projeto"/>
+
+          <div class="progress-row" style="margin-bottom:18px;">
+            <div class="progress-bar-track"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+            <div class="progress-pct">${pct}%</div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label">objetivo</span>
+            <textarea id="proj-objective" placeholder="o que significa concluir este projeto?">${escapeHtml(p.objective||'')}</textarea>
+          </div>
+
+          <div class="field-row2">
+            <div class="field-group">
+              <span class="field-label">categoria</span>
+              <select id="proj-category">
+                ${PROJECT_CATEGORIES.map(c => `<option value="${c}" ${p.category===c?'selected':''}>${c}</option>`).join('')}
+              </select>
+            </div>
+            <div class="field-group">
+              <span class="field-label">status</span>
+              <select id="proj-status">
+                ${PROJECT_STATUS.map(s => `<option value="${s.v}" ${p.status===s.v?'selected':''}>${s.label}</option>`).join('')}
+              </select>
+            </div>
+          </div>
+
+          <div class="field-row2">
+            <div class="field-group">
+              <span class="field-label">prazo (opcional)</span>
+              <input type="date" id="proj-deadline" value="${p.deadline||''}"/>
+            </div>
+          </div>
+
+          <div class="section-top" style="margin:6px 0 8px;">
+            <span class="field-label" style="margin:0;">etapas</span>
+            <button class="ai-btn" id="proj-ai-btn" ${aiState.loading && aiState.kind==='project_plan' ? 'disabled' : ''}>✨ ajudar com IA</button>
+          </div>
+
+          ${aiState.loading && aiState.kind==='project_plan' && aiState.forId===p.id ? `
+            <div class="ai-loading"><span class="ai-dot"></span><span class="ai-dot"></span><span class="ai-dot"></span> pensando no plano…</div>
+          ` : ''}
+          ${showAi && aiState.suggestion ? `
+            <div class="ai-panel">
+              <p class="ai-title">Sugestão da IA</p>
+              <strong>Objetivo:</strong> ${escapeHtml(aiState.suggestion.objective)}
+              ${'\n\nEtapas:\n' + aiState.suggestion.steps.map((s,i)=>`${i+1}. ${escapeHtml(s)}`).join('\n')}
+              <div class="ai-panel-actions">
+                <button class="mini-btn" id="ai-dismiss">ignorar</button>
+                <button class="mini-btn primary" id="ai-accept-project">aceitar tudo</button>
+              </div>
+            </div>
+          ` : ''}
+
+          <ul class="steps-list">
+            ${steps.map(s => `
+              <li class="step-item ${s.done?'done':''}" data-step-id="${s.id}">
+                <button class="step-check" data-action="toggle-step" data-id="${s.id}">
+                  <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M2 7L5.5 10.5L12 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <span class="step-name">${escapeHtml(s.name)}</span>
+                <button class="step-remove" data-action="remove-step" data-id="${s.id}">&times;</button>
+              </li>
+            `).join('')}
+          </ul>
+          <div class="add-step-row">
+            <input type="text" id="new-step-input" placeholder="adicionar etapa…" maxlength="80"/>
+            <button class="add-step-btn" id="add-step-btn">+</button>
+          </div>
+
+          <div class="field-group" style="margin-top:20px;">
+            <span class="field-label">observações</span>
+            <textarea id="proj-notes" placeholder="anotações livres">${escapeHtml(p.notes||'')}</textarea>
+          </div>
+
+          <div class="danger-zone">
+            <button class="btn-delete" id="proj-delete">excluir projeto</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function openQuickMenu(){ quickOpen = true; render(); }
+function closeQuickMenu(){ quickOpen = false; render(); }
+
+function openSheet(kind){
+  sheetKind = kind;
   selectedDate = todayKey();
   selectedTime = '';
   sheetOpen = true;
   render();
-  const input = document.getElementById(view === 'rotina' ? 'new-task' : 'new-event-title');
+  const idMap = { task:'new-task', event:'new-event-title', wtd:'new-wtd-title', project:'new-project-name' };
+  const input = document.getElementById(idMap[kind]);
   if(input) setTimeout(() => input.focus(), 250);
 }
 function closeSheet(){
   sheetOpen = false;
   render();
+  setTimeout(() => { sheetKind = null; }, 260);
+}
+
+function openDetail(kind, id){
+  detailKind = kind; detailId = id; detailOpen = true;
+  aiState = { loading:false, kind:null, forId:null, suggestion:null };
+  render();
+}
+function closeDetail(){
+  detailOpen = false;
+  render();
+  setTimeout(() => { detailKind = null; detailId = null; }, 260);
+}
+
+function viewBody(){
+  switch(view){
+    case 'home': return renderHome();
+    case 'rotina': return renderRotina();
+    case 'agenda': return renderAgenda();
+    case 'wtd': return renderWantToDo();
+    case 'projects': return renderProjects();
+    case 'week': return renderWeek();
+    default: return renderHome();
+  }
 }
 
 function render(){
@@ -1071,12 +2123,14 @@ function render(){
   app.innerHTML = `
     ${renderHeader()}
     <main>
-      ${ view === 'rotina' ? renderRotina() : renderAgenda() }
+      ${ viewBody() }
     </main>
     <button class="fab" id="fab" aria-label="adicionar">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="white" stroke-width="2.2" stroke-linecap="round"/></svg>
     </button>
     ${renderSheet()}
+    ${renderQuickMenu()}
+    ${renderDetailModal()}
   `;
 
   const signoutBtn = document.getElementById('signout-btn');
@@ -1089,6 +2143,25 @@ function render(){
       render();
     });
   });
+
+  // navegação a partir da home
+  app.querySelectorAll('[data-view]').forEach(el => {
+    if(el.tagName === 'BUTTON' && el.closest('.tabs')) return; // já tratado acima
+    el.addEventListener('click', () => { view = el.dataset.view; render(); });
+  });
+  app.querySelectorAll('[data-project-open]').forEach(el => {
+    el.addEventListener('click', () => openDetail('project', el.dataset.projectOpen));
+  });
+
+  // ai hero (o que devo priorizar?)
+  const prioBtn = document.getElementById('priority-ai-btn');
+  if(prioBtn) prioBtn.addEventListener('click', runPriorityAI);
+  const weekAiBtn = document.getElementById('week-ai-btn');
+  if(weekAiBtn) weekAiBtn.addEventListener('click', runWeekAI);
+  const aiDismiss = document.getElementById('ai-dismiss');
+  if(aiDismiss) aiDismiss.addEventListener('click', dismissAI);
+  const aiAcceptWeek = document.getElementById('ai-accept-week');
+  if(aiAcceptWeek) aiAcceptWeek.addEventListener('click', acceptWeekAI);
 
   // rotina actions
   app.querySelectorAll('[data-action="toggle"]').forEach(btn => {
@@ -1117,77 +2190,227 @@ function render(){
     });
   });
 
-  // fab + sheet
-  document.getElementById('fab').addEventListener('click', openSheet);
-  const overlay = document.getElementById('sheet-overlay');
-  overlay.addEventListener('click', (e) => { if(e.target === overlay) closeSheet(); });
-
-  const form = document.getElementById('add-form');
-  const submitBtn = document.getElementById('submit-btn');
-
-  if(view === 'rotina'){
-    const input = document.getElementById('new-task');
-    input.addEventListener('input', () => { submitBtn.disabled = !input.value.trim(); });
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const name = input.value.trim();
-      if(!name) return;
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'salvando…';
+  // quero fazer: remover / status / virar projeto
+  app.querySelectorAll('[data-action="remove-wtd"]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      try{ await backend.removeWtd(btn.dataset.id); render(); }
+      catch(e){ toast('não deu para remover.'); }
+    });
+  });
+  app.querySelectorAll('[data-action="wtd-status"]').forEach(sel => {
+    sel.addEventListener('change', async () => {
+      try{ await backend.updateWtd(sel.dataset.id, { status: sel.value }); render(); }
+      catch(e){ toast('não deu para atualizar.'); render(); }
+    });
+  });
+  app.querySelectorAll('[data-action="wtd-to-project"]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const w = wantToDo.find(w => w.id === btn.dataset.id);
+      if(!w) return;
       try{
-        await backend.addTask(name);
-        closeSheet();
-      }catch(err){
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'adicionar tarefa';
-        toast('não deu para salvar a tarefa.');
-      }
+        await backend.updateWtd(w.id, { status: 'projeto' });
+        const proj = await backend.addProject({ name: w.title, category: mapWtdCategoryToProject(w.category), description: w.description || '' });
+        view = 'projects';
+        render();
+        openDetail('project', proj.id);
+      }catch(e){ toast('não deu para transformar em projeto.'); }
     });
-  } else {
-    const titleInput = document.getElementById('new-event-title');
-    const timeInput = document.getElementById('time-input');
+  });
 
-    function refreshSubmit(){ submitBtn.disabled = !titleInput.value.trim(); }
-    titleInput.addEventListener('input', refreshSubmit);
-    refreshSubmit();
-
-    app.querySelectorAll('.date-pill').forEach(pill => {
-      pill.addEventListener('click', () => {
-        selectedDate = pill.dataset.date;
-        app.querySelectorAll('.date-pill').forEach(p => p.classList.remove('selected'));
-        pill.classList.add('selected');
+  // fab + menu rápido
+  document.getElementById('fab').addEventListener('click', openQuickMenu);
+  const quickOverlay = document.getElementById('quick-overlay');
+  if(quickOverlay){
+    quickOverlay.addEventListener('click', (e) => { if(e.target === quickOverlay) closeQuickMenu(); });
+    quickOverlay.querySelectorAll('[data-quick]').forEach(opt => {
+      opt.addEventListener('click', () => {
+        const kind = opt.dataset.quick;
+        closeQuickMenu();
+        setTimeout(() => openSheet(kind), 200);
       });
-    });
-
-    app.querySelectorAll('.time-chip').forEach(chip => {
-      chip.addEventListener('click', () => {
-        selectedTime = chip.dataset.time;
-        timeInput.value = selectedTime;
-        app.querySelectorAll('.time-chip').forEach(c => c.classList.remove('selected'));
-        chip.classList.add('selected');
-      });
-    });
-    timeInput.addEventListener('input', () => {
-      selectedTime = timeInput.value;
-      app.querySelectorAll('.time-chip').forEach(c => c.classList.toggle('selected', c.dataset.time === selectedTime));
-    });
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const title = titleInput.value.trim();
-      if(!title) return;
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'salvando…';
-      try{
-        await backend.addEvent({ title, date: selectedDate, time: timeInput.value || '' });
-        closeSheet();
-      }catch(err){
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'adicionar à agenda';
-        toast('não deu para salvar o compromisso.');
-      }
     });
   }
+
+  // sheet de criação (tarefa / compromisso / quero fazer / projeto)
+  const overlay = document.getElementById('sheet-overlay');
+  if(overlay){
+    overlay.addEventListener('click', (e) => { if(e.target === overlay) closeSheet(); });
+    const form = document.getElementById('add-form');
+    const submitBtn = document.getElementById('submit-btn');
+
+    if(sheetKind === 'task'){
+      const input = document.getElementById('new-task');
+      input.addEventListener('input', () => { submitBtn.disabled = !input.value.trim(); });
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = input.value.trim();
+        if(!name) return;
+        submitBtn.disabled = true; submitBtn.textContent = 'salvando…';
+        try{ await backend.addTask(name); closeSheet(); }
+        catch(err){ submitBtn.disabled = false; submitBtn.textContent = 'adicionar tarefa'; toast('não deu para salvar a tarefa.'); }
+      });
+
+    } else if(sheetKind === 'wtd'){
+      const input = document.getElementById('new-wtd-title');
+      let cat = 'pessoal';
+      input.addEventListener('input', () => { submitBtn.disabled = !input.value.trim(); });
+      overlay.querySelectorAll('[data-cat]').forEach(chip => {
+        chip.addEventListener('click', () => {
+          cat = chip.dataset.cat;
+          overlay.querySelectorAll('[data-cat]').forEach(c => c.classList.remove('selected'));
+          chip.classList.add('selected');
+        });
+      });
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const title = input.value.trim();
+        if(!title) return;
+        submitBtn.disabled = true; submitBtn.textContent = 'salvando…';
+        try{ await backend.addWtd({ title, category: cat }); closeSheet(); }
+        catch(err){ submitBtn.disabled = false; submitBtn.textContent = 'adicionar'; toast('não deu para salvar.'); }
+      });
+
+    } else if(sheetKind === 'project'){
+      const input = document.getElementById('new-project-name');
+      input.addEventListener('input', () => { submitBtn.disabled = !input.value.trim(); });
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = input.value.trim();
+        if(!name) return;
+        submitBtn.disabled = true; submitBtn.textContent = 'criando…';
+        try{
+          const proj = await backend.addProject({ name });
+          closeSheet();
+          setTimeout(() => openDetail('project', proj.id), 220);
+        }catch(err){ submitBtn.disabled = false; submitBtn.textContent = 'criar e detalhar'; toast('não deu para criar o projeto.'); }
+      });
+
+    } else { // event
+      const titleInput = document.getElementById('new-event-title');
+      const timeInput = document.getElementById('time-input');
+      function refreshSubmit(){ submitBtn.disabled = !titleInput.value.trim(); }
+      titleInput.addEventListener('input', refreshSubmit);
+      refreshSubmit();
+
+      overlay.querySelectorAll('.date-pill').forEach(pill => {
+        pill.addEventListener('click', () => {
+          selectedDate = pill.dataset.date;
+          overlay.querySelectorAll('.date-pill').forEach(p => p.classList.remove('selected'));
+          pill.classList.add('selected');
+        });
+      });
+      overlay.querySelectorAll('.time-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          selectedTime = chip.dataset.time;
+          timeInput.value = selectedTime;
+          overlay.querySelectorAll('.time-chip').forEach(c => c.classList.remove('selected'));
+          chip.classList.add('selected');
+        });
+      });
+      timeInput.addEventListener('input', () => {
+        selectedTime = timeInput.value;
+        overlay.querySelectorAll('.time-chip').forEach(c => c.classList.toggle('selected', c.dataset.time === selectedTime));
+      });
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const title = titleInput.value.trim();
+        if(!title) return;
+        submitBtn.disabled = true; submitBtn.textContent = 'salvando…';
+        try{ await backend.addEvent({ title, date: selectedDate, time: timeInput.value || '' }); closeSheet(); }
+        catch(err){ submitBtn.disabled = false; submitBtn.textContent = 'adicionar à agenda'; toast('não deu para salvar o compromisso.'); }
+      });
+    }
+  }
+
+  // modal de detalhe do projeto
+  const detailOverlayEl = document.getElementById('detail-overlay');
+  if(detailOverlayEl){
+    const closeBtn = document.getElementById('detail-close');
+    if(closeBtn) closeBtn.addEventListener('click', closeDetail);
+
+    const p = projects.find(p => p.id === detailId);
+    if(p){
+      const nameInput = document.getElementById('proj-name');
+      const objInput = document.getElementById('proj-objective');
+      const catSel = document.getElementById('proj-category');
+      const statusSel = document.getElementById('proj-status');
+      const deadlineInput = document.getElementById('proj-deadline');
+      const notesInput = document.getElementById('proj-notes');
+
+      const saveField = async (patch) => {
+        try{ await backend.updateProject(p.id, patch); }
+        catch(e){ toast('não deu para salvar essa alteração.'); }
+      };
+      nameInput.addEventListener('blur', () => { if(nameInput.value.trim()) saveField({ name: nameInput.value.trim() }); });
+      objInput.addEventListener('blur', () => saveField({ objective: objInput.value }));
+      notesInput.addEventListener('blur', () => saveField({ notes: notesInput.value }));
+      catSel.addEventListener('change', () => saveField({ category: catSel.value }));
+      statusSel.addEventListener('change', async () => { await saveField({ status: statusSel.value }); render(); });
+      deadlineInput.addEventListener('change', () => saveField({ deadline: deadlineInput.value || null }));
+
+      const stepInput = document.getElementById('new-step-input');
+      const addStepBtn = document.getElementById('add-step-btn');
+      const submitNewStep = async () => {
+        const name = stepInput.value.trim();
+        if(!name) return;
+        try{ await backend.addStep(p.id, name); render(); openDetail('project', p.id); }
+        catch(e){ toast('não deu para adicionar a etapa.'); }
+      };
+      addStepBtn.addEventListener('click', submitNewStep);
+      stepInput.addEventListener('keydown', (e) => { if(e.key === 'Enter'){ e.preventDefault(); submitNewStep(); } });
+
+      app.querySelectorAll('[data-action="toggle-step"]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const list = projectSteps[p.id] || [];
+          const s = list.find(s => s.id === btn.dataset.id);
+          const nextDone = !(s && s.done);
+          try{ await backend.toggleStep(p.id, btn.dataset.id, nextDone); render(); openDetail('project', p.id); }
+          catch(e){ toast('não deu para atualizar a etapa.'); }
+        });
+      });
+      app.querySelectorAll('[data-action="remove-step"]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          try{ await backend.removeStep(p.id, btn.dataset.id); render(); openDetail('project', p.id); }
+          catch(e){ toast('não deu para remover a etapa.'); }
+        });
+      });
+
+      const aiBtn = document.getElementById('proj-ai-btn');
+      if(aiBtn) aiBtn.addEventListener('click', () => runProjectAI(p.id));
+      const aiAcceptProj = document.getElementById('ai-accept-project');
+      if(aiAcceptProj) aiAcceptProj.addEventListener('click', async () => { await acceptProjectAI(); openDetail('project', p.id); });
+      const aiDismissProj = document.getElementById('ai-dismiss');
+      if(aiDismissProj) aiDismissProj.addEventListener('click', () => { dismissAI(); openDetail('project', p.id); });
+
+      const delBtn = document.getElementById('proj-delete');
+      if(delBtn) delBtn.addEventListener('click', async () => {
+        if(!confirm(`excluir o projeto "${p.name}"? essa ação não pode ser desfeita.`)) return;
+        try{ await backend.removeProject(p.id); closeDetail(); }
+        catch(e){ toast('não deu para excluir o projeto.'); }
+      });
+    }
+  }
+
+  // semana: campos de texto
+  app.querySelectorAll('[data-week-field]').forEach(input => {
+    input.addEventListener('blur', async () => {
+      const wk = { ...emptyWeek(), ...currentWeek() };
+      const field = input.dataset.weekField;
+      if(field === 'priorities'){
+        wk.priorities[Number(input.dataset.idx)] = input.value;
+      } else {
+        wk[field] = input.value;
+      }
+      try{ await backend.saveWeek(weekKey(), wk); }
+      catch(e){ toast('não deu para salvar a semana.'); }
+    });
+  });
+}
+
+function mapWtdCategoryToProject(cat){
+  const map = { aprendizado:'aprendizado', viagem:'viagem', financeiro:'financeiro', saúde:'saúde' };
+  return map[cat] || 'outro';
 }
 
 function bindAuth(app){
@@ -1252,7 +2475,7 @@ async function enterApp(){
 }
 
 /* ============================================================
-   8. BOOT
+   9. BOOT
    ============================================================ */
 (async function init(){
   if(!CONFIGURED){
@@ -1269,7 +2492,7 @@ async function enterApp(){
     session = s;
     if(!s && wasLogged){
       screen = 'auth';
-      tasks = []; log = {}; events = [];
+      tasks = []; log = {}; events = []; wantToDo = []; projects = []; projectSteps = {}; weeklyPlans = {};
       render();
     }
   });
