@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Rotina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #ECEDE4;
+    --surface: #FFFFFF;
+    --surface-soft: #F5F5EE;
+    --ink: #1C1F26;
+    --ink-soft: #656B60;
+    --ink-faint: #A2A69A;
+    --line: #E3E4D9;
+    --moss: #4B6142;
+    --moss-deep: #34432D;
+    --moss-soft: #E3E9DC;
+    --amber: #C1832E;
+    --amber-soft: #F4E5CC;
+    --clay: #A6493A;
+    --shadow-sm: 0 1px 2px rgba(28,31,38,.05);
+    --shadow-md: 0 6px 20px rgba(28,31,38,.08);
+    --shadow-fab: 0 8px 22px rgba(75,97,66,.38);
+    --radius: 18px;
+  }
+  *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html,body{ height:100%; }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Work Sans', sans-serif;
+    display:flex;
+    justify-content:center;
+    min-height:100vh;
+  }
+  .app{
+    width:100%;
+    max-width:480px;
+    min-height:100vh;
+    background: var(--bg);
+    display:flex;
+    flex-direction:column;
+    position:relative;
+    overflow-x:hidden;
+  }
+  :focus-visible{ outline: 2px solid var(--moss); outline-offset: 2px; }
+
+  /* Header */
+  header{
+    padding: 30px 20px 16px;
+  }
+  .account-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:16px;
+  }
+  .account-mail{
+    font-size:12.5px;
+    color: var(--ink-soft);
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .account-mail b{ color: var(--moss-deep); font-weight:600; }
+  .link-btn{
+    border:none;
+    background: var(--surface);
+    color: var(--ink-soft);
+    font-family:'Work Sans', sans-serif;
+    font-size:12.5px;
+    font-weight:600;
+    padding: 7px 12px;
+    border-radius: 999px;
+    box-shadow: var(--shadow-sm);
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .link-btn:hover{ color: var(--clay); }
+  .day-label{
+    font-family:'Fraunces', serif;
+    font-size: 38px;
+    font-weight: 500;
+    line-height:1.05;
+    margin:0 0 4px;
+    font-variation-settings: 'opsz' 40;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .date-sub{
+    font-size:14px;
+    color: var(--ink-soft);
+    margin:0 0 20px;
+  }
+  .progress-card{
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    padding: 16px 18px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-bottom:18px;
+  }
+  .ring{
+    width:46px; height:46px; flex-shrink:0;
+  }
+  .ring circle{ transition: stroke-dashoffset .4s ease; }
+  .progress-text{
+    font-size:14px;
+    color: var(--ink-soft);
+    margin:0;
+  }
+  .progress-text strong{
+    color: var(--ink);
+    font-weight:600;
+  }
+
+  /* Tabs */
+  .tabs{
+    display:flex;
+    background: var(--surface-soft);
+    border-radius: 999px;
+    padding: 4px;
+    gap:2px;
+  }
+  .tabs button{
+    flex:1;
+    border:none;
+    background:transparent;
+    font-family:'Work Sans', sans-serif;
+    font-size:14px;
+    font-weight:500;
+    color: var(--ink-soft);
+    padding: 10px 0;
+    border-radius: 999px;
+    cursor:pointer;
+    transition: background .18s ease, color .18s ease, box-shadow .18s ease;
+  }
+  .tabs button.active{
+    background: var(--moss);
+    color: white;
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Task list */
+  main{
+    flex:1;
+    padding: 4px 20px 110px;
+  }
+  .empty-state{
+    text-align:center;
+    padding: 56px 24px;
+    color: var(--ink-soft);
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    margin-top:14px;
+  }
+  .empty-state .glyph{
+    width:40px; height:40px; margin:0 auto 14px;
+    color: var(--ink-faint);
+  }
+  .empty-state p{ margin:0; font-size:14.5px; line-height:1.6; }
+
+  ul.tasks{ list-style:none; margin:14px 0 0; padding:0; display:flex; flex-direction:column; gap:10px; }
+  li.task{
+    display:flex;
+    align-items:flex-start;
+    gap:13px;
+    padding: 15px 14px;
+    background: var(--surface);
+    border-radius: 14px;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow .15s ease;
+  }
+  .check{
+    width:25px; height:25px;
+    border-radius: 8px;
+    border: 1.5px solid var(--ink-faint);
+    background: transparent;
+    flex-shrink:0;
+    margin-top:1px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition: background .15s ease, border-color .15s ease, transform .1s ease;
+  }
+  .check:active{ transform: scale(.9); }
+  .check svg{ opacity:0; transform: scale(.6); transition: opacity .15s ease, transform .15s ease; }
+  li.task.done{ box-shadow:none; background: var(--surface-soft); }
+  li.task.done .check{ background: var(--moss); border-color: var(--moss); }
+  li.task.done .check svg{ opacity:1; transform: scale(1); }
+
+  .task-body{ flex:1; min-width:0; }
+  .task-name{
+    font-size:15.5px;
+    font-weight:500;
+    line-height:1.35;
+    transition: color .15s ease;
+  }
+  li.task.done .task-name{ color: var(--ink-faint); text-decoration: line-through; text-decoration-color: var(--ink-faint); text-decoration-thickness: 1.2px; }
+
+  .streak{
+    display:flex;
+    gap:4px;
+    margin-top:9px;
+  }
+  .streak i{
+    width:13px; height:13px;
+    border-radius:4px;
+    background: var(--line);
+    display:block;
+  }
+  .streak i.hit{ background: var(--amber); }
+
+  .item-remove{
+    border:none; background:none; color: var(--ink-faint);
+    font-size:19px; line-height:1; padding:4px 4px; cursor:pointer;
+    opacity:.7; flex-shrink:0;
+  }
+  .item-remove:hover{ opacity:1; color: var(--clay); }
+
+  /* Agenda */
+  .day-group{ margin-top:20px; }
+  .day-group:first-child{ margin-top:14px; }
+  .day-group-label{
+    font-size:12.5px;
+    font-weight:600;
+    color: var(--moss-deep);
+    margin: 0 4px 8px;
+    display:flex;
+    align-items:baseline;
+    gap:7px;
+    text-transform: lowercase;
+  }
+  .day-group-label .n{
+    color: var(--ink-faint);
+    font-weight:500;
+  }
+  ul.events{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
+  li.event{
+    display:flex;
+    gap:13px;
+    padding: 13px 14px;
+    background: var(--surface);
+    border-radius: 14px;
+    box-shadow: var(--shadow-sm);
+    align-items:center;
+  }
+  .event-time{
+    width:50px;
+    flex-shrink:0;
+    font-size:13px;
+    font-weight:600;
+    color: var(--moss-deep);
+    background: var(--moss-soft);
+    border-radius: 8px;
+    padding: 5px 0;
+    text-align:center;
+    font-variant-numeric: tabular-nums;
+  }
+  .event-time.notime{ color: var(--ink-faint); background: var(--surface-soft); }
+  .event-body{ flex:1; min-width:0; }
+  .event-title{ font-size:15px; font-weight:500; line-height:1.4; }
+
+  /* FAB */
+  .fab{
+    position:fixed;
+    bottom: calc(24px + env(safe-area-inset-bottom));
+    right: calc(50% - 240px + 20px);
+    width:58px; height:58px;
+    border-radius:50%;
+    background: var(--moss);
+    color:white;
+    border:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow: var(--shadow-fab);
+    cursor:pointer;
+    transition: transform .12s ease;
+    z-index: 20;
+  }
+  .fab:active{ transform: scale(.94); }
+  @media (max-width: 480px){
+    .fab{ right: 20px; }
+  }
+
+  /* Sheet */
+  .sheet-overlay{
+    position:fixed; inset:0;
+    background: rgba(20,22,18,.42);
+    z-index: 30;
+    opacity:0;
+    pointer-events:none;
+    transition: opacity .22s ease;
+    display:flex;
+    justify-content:center;
+    align-items:flex-end;
+  }
+  .sheet-overlay.open{ opacity:1; pointer-events:auto; }
+  .sheet{
+    width:100%;
+    max-width:480px;
+    background: var(--surface);
+    border-radius: 26px 26px 0 0;
+    padding: 10px 20px calc(22px + env(safe-area-inset-bottom));
+    transform: translateY(100%);
+    transition: transform .28s cubic-bezier(.32,.72,0,1);
+    box-shadow: 0 -8px 30px rgba(28,31,38,.14);
+  }
+  .sheet-overlay.open .sheet{ transform: translateY(0); }
+  .sheet-handle{
+    width:36px; height:4px; background: var(--line); border-radius: 999px;
+    margin: 6px auto 16px;
+  }
+  .sheet-title{
+    font-family:'Fraunces', serif;
+    font-size:21px;
+    font-weight:500;
+    margin: 0 0 16px;
+    font-variation-settings: 'opsz' 30;
+  }
+  .field-label{
+    font-size:12px;
+    font-weight:600;
+    color: var(--ink-soft);
+    margin: 0 0 8px;
+    display:block;
+  }
+  .sheet input[type="text"]{
+    width:100%;
+    border:none;
+    background: var(--surface-soft);
+    border-radius: 12px;
+    padding: 14px 14px;
+    font-family:'Work Sans', sans-serif;
+    font-size:15.5px;
+    color: var(--ink);
+    outline:none;
+    margin-bottom:18px;
+  }
+  .sheet input::placeholder{ color: var(--ink-faint); }
+
+  .date-strip{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    padding: 2px 2px 6px;
+    margin-bottom:18px;
+    scrollbar-width:none;
+  }
+  .date-strip::-webkit-scrollbar{ display:none; }
+  .date-pill{
+    flex-shrink:0;
+    width:52px;
+    padding: 10px 0 9px;
+    border-radius: 14px;
+    background: var(--surface-soft);
+    border: 1.5px solid transparent;
+    text-align:center;
+    cursor:pointer;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:3px;
+  }
+  .date-pill .dow{ font-size:11px; color: var(--ink-faint); font-weight:600; text-transform:lowercase; }
+  .date-pill .num{ font-size:16px; color: var(--ink); font-weight:600; font-family:'Fraunces', serif; }
+  .date-pill.selected{ background: var(--moss); }
+  .date-pill.selected .dow{ color: var(--moss-soft); }
+  .date-pill.selected .num{ color: white; }
+
+  .time-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom: 22px;
+    flex-wrap:wrap;
+  }
+  .time-chip{
+    border:none;
+    background: var(--surface-soft);
+    color: var(--ink-soft);
+    font-size:13px;
+    font-weight:600;
+    padding: 9px 13px;
+    border-radius: 999px;
+    cursor:pointer;
+  }
+  .time-chip.selected{ background: var(--moss); color: white; }
+  .time-input-wrap{
+    margin-left:auto;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .sheet input[type="time"]{
+    border:none;
+    background: var(--surface-soft);
+    border-radius: 10px;
+    padding: 9px 10px;
+    font-family:'Work Sans', sans-serif;
+    font-size:13.5px;
+    color: var(--ink);
+    outline:none;
+  }
+
+  .sheet-submit{
+    width:100%;
+    border:none;
+    background: var(--moss);
+    color:white;
+    font-family:'Work Sans', sans-serif;
+    font-weight:600;
+    font-size:15px;
+    padding: 15px 0;
+    border-radius: 14px;
+    cursor:pointer;
+    transition: opacity .15s ease, transform .1s ease;
+  }
+  .sheet-submit:disabled{ opacity:.4; }
+  .sheet-submit:not(:disabled):active{ transform: scale(.98); }
+
+  .loading{
+    display:flex; align-items:center; justify-content:center;
+    height:100vh; color: var(--ink-soft); font-size:14px;
+  }
+
+  /* ---------- Tela de entrada ---------- */
+  .auth{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    padding: 40px 24px calc(40px + env(safe-area-inset-bottom));
+  }
+  .auth-mark{
+    width:44px; height:44px;
+    border-radius: 14px;
+    background: var(--moss);
+    color:white;
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom: 22px;
+  }
+  .auth h1{
+    font-family:'Fraunces', serif;
+    font-size: 34px;
+    font-weight:500;
+    font-variation-settings: 'opsz' 40;
+    letter-spacing:-0.01em;
+    margin: 0 0 8px;
+    line-height:1.1;
+  }
+  .auth .sub{
+    font-size:14.5px;
+    color: var(--ink-soft);
+    margin: 0 0 28px;
+    line-height:1.55;
+  }
+  .auth-card{
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    padding: 20px 18px;
+  }
+  .auth-card input{
+    width:100%;
+    border:none;
+    background: var(--surface-soft);
+    border-radius: 12px;
+    padding: 14px;
+    font-family:'Work Sans', sans-serif;
+    font-size:15.5px;
+    color: var(--ink);
+    outline:none;
+    margin-bottom:14px;
+  }
+  .auth-card input::placeholder{ color: var(--ink-faint); }
+  .auth-submit{
+    width:100%;
+    border:none;
+    background: var(--moss);
+    color:white;
+    font-family:'Work Sans', sans-serif;
+    font-weight:600;
+    font-size:15px;
+    padding: 15px 0;
+    border-radius: 14px;
+    cursor:pointer;
+    margin-top: 4px;
+    transition: opacity .15s ease, transform .1s ease;
+  }
+  .auth-submit:disabled{ opacity:.45; cursor:default; }
+  .auth-submit:not(:disabled):active{ transform: scale(.98); }
+  .auth-switch{
+    text-align:center;
+    font-size:13.5px;
+    color: var(--ink-soft);
+    margin: 18px 0 0;
+  }
+  .auth-switch button{
+    border:none; background:none; padding:0;
+    font-family:'Work Sans', sans-serif;
+    font-size:13.5px; font-weight:600;
+    color: var(--moss);
+    cursor:pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .auth-msg{
+    font-size:13.5px;
+    line-height:1.5;
+    border-radius: 12px;
+    padding: 11px 13px;
+    margin-bottom: 14px;
+  }
+  .auth-msg.err{ background: #F6E2DE; color: #7C3125; }
+  .auth-msg.ok{ background: var(--moss-soft); color: var(--moss-deep); }
+
+  .setup-note{
+    background: var(--amber-soft);
+    color: #6B4712;
+    border-radius: 12px;
+    padding: 13px 14px;
+    font-size:13px;
+    line-height:1.55;
+    margin-bottom:16px;
+  }
+  .setup-note code{ font-family: ui-monospace, monospace; font-size:12.5px; }
+
+  /* toast */
+  .toast{
+    position:fixed;
+    bottom: calc(96px + env(safe-area-inset-bottom));
+    left:50%;
+    transform: translate(-50%, 12px);
+    background: var(--ink);
+    color:white;
+    font-size:13.5px;
+    padding: 11px 16px;
+    border-radius: 999px;
+    box-shadow: var(--shadow-md);
+    opacity:0;
+    pointer-events:none;
+    transition: opacity .2s ease, transform .2s ease;
+    z-index: 60;
+    max-width: 90vw;
+    text-align:center;
+  }
+  .toast.show{ opacity:1; transform: translate(-50%, 0); }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition-duration: .01ms !important; animation-duration: .01ms !important; }
+  }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="loading" id="loading">carregando sua rotina…</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* ============================================================
+   1. CONFIGURAÇÃO
+   Pegue os dois valores em: Supabase → Project Settings → API
+   A anon key é pública por design; quem protege os dados é o RLS
+   do script SQL que acompanha este arquivo.
+   ============================================================ */
+const SUPABASE_URL = 'https://qpngjzcjykdcpjywskqq.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwbmdqemNqeWtkY3BqeXdza3FxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1MTg1NDUsImV4cCI6MjEwNDA5NDU0NX0.uN_PJ6-Mao5TiZsoZjGSPrUg1546EKRKfBhtH-KP39w';
+
+const CONFIGURED = !SUPABASE_URL.includes('SEU-PROJETO') && !SUPABASE_ANON_KEY.includes('SUA-ANON');
+const sb = CONFIGURED ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+/* ============================================================
+   2. HELPERS DE DATA
+   ============================================================ */
+const DIAS = ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
+const DIAS_ABR = ['dom','seg','ter','qua','qui','sex','sáb'];
+const MESES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+
+function todayKey(d = new Date()){
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function lastNDays(n){
+  const out = [];
+  const d = new Date();
+  for(let i = n-1; i >= 0; i--){
+    const dd = new Date(d);
+    dd.setDate(d.getDate() - i);
+    out.push(todayKey(dd));
+  }
+  return out;
+}
+function nextNDays(n){
+  const out = [];
+  const d = new Date();
+  for(let i = 0; i < n; i++){
+    const dd = new Date(d);
+    dd.setDate(d.getDate() + i);
+    out.push(todayKey(dd));
+  }
+  return out;
+}
+function parseKey(key){
+  const [y,m,d] = key.split('-').map(Number);
+  return new Date(y, m-1, d);
+}
+function dayGroupLabel(key){
+  const today = todayKey();
+  const tmr = todayKey(new Date(Date.now() + 86400000));
+  if(key === today) return 'hoje';
+  if(key === tmr) return 'amanhã';
+  const date = parseKey(key);
+  return `${DIAS_ABR[date.getDay()]}, ${date.getDate()} de ${MESES[date.getMonth()]}`;
+}
+function escapeHtml(s){
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+function uid(p){ return p + Date.now() + Math.random().toString(36).slice(2,6); }
+
+let toastTimer;
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3200);
+}
+
+/* ============================================================
+   3. ESTADO
+   ============================================================ */
+let session = null;          // sessão do Supabase (null = deslogado)
+let screen  = 'auth';        // 'auth' | 'app'
+let authMode = 'login';      // 'login' | 'signup'
+let authMsg = null;          // { type:'err'|'ok', text }
+let authBusy = false;
+
+let view = 'rotina';         // 'rotina' | 'agenda'
+let sheetOpen = false;
+let selectedDate = todayKey();
+let selectedTime = '';
+
+let tasks = [];              // [{id, name}]
+let log = {};                // { '2026-09-03': { taskId: true } }
+let events = [];             // [{id, date, time, title}]
+
+/* ============================================================
+   4. BACKEND
+   Duas implementações com a mesma interface:
+   - supabaseBackend: usado quando há login (dados na nuvem)
+   - localBackend:    fallback offline no próprio navegador
+   ============================================================ */
+const localBackend = {
+  cloud: false,
+  read(k, fb){ try{ return JSON.parse(localStorage.getItem(k)) ?? fb; }catch(e){ return fb; } },
+  write(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} },
+  async load(){
+    tasks  = this.read('rotina.tasks', []);
+    log    = this.read('rotina.log', {});
+    events = this.read('rotina.events', []);
+  },
+  async addTask(name){
+    const t = { id: uid('t'), name };
+    tasks.push(t);
+    this.write('rotina.tasks', tasks);
+    return t;
+  },
+  async removeTask(id){
+    tasks = tasks.filter(t => t.id !== id);
+    Object.keys(log).forEach(k => { delete log[k][id]; });
+    this.write('rotina.tasks', tasks);
+    this.write('rotina.log', log);
+  },
+  async setDone(){ this.write('rotina.log', log); },
+  async addEvent(ev){
+    const e = { id: uid('e'), ...ev };
+    events.push(e);
+    this.write('rotina.events', events);
+    return e;
+  },
+  async removeEvent(id){
+    events = events.filter(e => e.id !== id);
+    this.write('rotina.events', events);
+  }
+};
+
+const supabaseBackend = {
+  cloud: true,
+  async load(){
+    const [tRes, lRes, eRes] = await Promise.all([
+      sb.from('tasks').select('id,name,position,created_at').order('position').order('created_at'),
+      sb.from('task_logs').select('task_id,day').gte('day', lastNDays(60)[0]),
+      sb.from('events').select('id,title,event_date,event_time').order('event_date').order('event_time')
+    ]);
+    if(tRes.error || lRes.error || eRes.error){
+      throw (tRes.error || lRes.error || eRes.error);
+    }
+    tasks = tRes.data.map(r => ({ id: r.id, name: r.name }));
+    log = {};
+    lRes.data.forEach(r => {
+      if(!log[r.day]) log[r.day] = {};
+      log[r.day][r.task_id] = true;
+    });
+    events = eRes.data.map(r => ({
+      id: r.id,
+      title: r.title,
+      date: r.event_date,
+      time: r.event_time ? String(r.event_time).slice(0,5) : ''
+    }));
+  },
+  async addTask(name){
+    const { data, error } = await sb.from('tasks')
+      .insert({ name, position: tasks.length })
+      .select('id,name').single();
+    if(error) throw error;
+    const t = { id: data.id, name: data.name };
+    tasks.push(t);
+    return t;
+  },
+  async removeTask(id){
+    const before = tasks;
+    tasks = tasks.filter(t => t.id !== id);
+    const { error } = await sb.from('tasks').delete().eq('id', id);
+    if(error){ tasks = before; throw error; }
+    Object.keys(log).forEach(k => { delete log[k][id]; });
+  },
+  async setDone(taskId, day, done){
+    if(done){
+      const { error } = await sb.from('task_logs')
+        .upsert({ task_id: taskId, day }, { onConflict: 'task_id,day' });
+      if(error) throw error;
+    } else {
+      const { error } = await sb.from('task_logs')
+        .delete().eq('task_id', taskId).eq('day', day);
+      if(error) throw error;
+    }
+  },
+  async addEvent(ev){
+    const { data, error } = await sb.from('events')
+      .insert({ title: ev.title, event_date: ev.date, event_time: ev.time || null })
+      .select('id,title,event_date,event_time').single();
+    if(error) throw error;
+    const e = {
+      id: data.id, title: data.title, date: data.event_date,
+      time: data.event_time ? String(data.event_time).slice(0,5) : ''
+    };
+    events.push(e);
+    return e;
+  },
+  async removeEvent(id){
+    const before = events;
+    events = events.filter(e => e.id !== id);
+    const { error } = await sb.from('events').delete().eq('id', id);
+    if(error){ events = before; throw error; }
+  }
+};
+
+let backend = CONFIGURED ? supabaseBackend : localBackend;
+
+/* ============================================================
+   5. LÓGICA DA ROTINA
+   ============================================================ */
+function isDone(id, key = todayKey()){
+  return !!(log[key] && log[key][id]);
+}
+async function toggleDone(id){
+  const key = todayKey();
+  const next = !isDone(id, key);
+  if(!log[key]) log[key] = {};
+  if(next) log[key][id] = true; else delete log[key][id];
+  render();
+  try{
+    await backend.setDone(id, key, next);
+  }catch(e){
+    if(next) delete log[key][id]; else log[key][id] = true;
+    render();
+    toast('não deu para salvar. verifique a conexão.');
+  }
+}
+function streakDots(id){
+  return lastNDays(5).map(k => isDone(id, k) ? 'hit' : '');
+}
+
+/* ============================================================
+   6. AUTENTICAÇÃO
+   ============================================================ */
+async function signIn(email, password){
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+  if(error) throw error;
+  return data.session;
+}
+async function signUp(email, password){
+  const { data, error } = await sb.auth.signUp({ email, password });
+  if(error) throw error;
+  return data.session; // null quando a confirmação por e-mail está ligada
+}
+async function signOut(){
+  await sb.auth.signOut();
+  session = null;
+  tasks = []; log = {}; events = [];
+  screen = 'auth';
+  authMode = 'login';
+  authMsg = null;
+  render();
+}
+function authErrorText(err){
+  const m = (err && err.message || '').toLowerCase();
+  if(m.includes('invalid login')) return 'e-mail ou senha não conferem.';
+  if(m.includes('already registered')) return 'esse e-mail já tem conta. entre com sua senha.';
+  if(m.includes('password') && m.includes('6')) return 'a senha precisa de pelo menos 6 caracteres.';
+  if(m.includes('email') && m.includes('invalid')) return 'esse e-mail não parece válido.';
+  if(m.includes('rate limit')) return 'muitas tentativas. espere um minuto.';
+  return err && err.message ? err.message : 'algo deu errado. tente de novo.';
+}
+
+/* ============================================================
+   7. RENDER
+   ============================================================ */
+const emptyGlyph = `<svg class="glyph" viewBox="0 0 40 40" fill="none"><rect x="7" y="9" width="26" height="24" rx="5" stroke="currentColor" stroke-width="1.6"/><path d="M7 16h26" stroke="currentColor" stroke-width="1.6"/><path d="M14 5v6M26 5v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
+
+function renderAuth(){
+  const isSignup = authMode === 'signup';
+  return `
+    <div class="auth">
+      <div class="auth-mark">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <path d="M4 12.5L9.5 18L20 6.5" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h1>${isSignup ? 'crie sua rotina' : 'bom te ver de novo'}</h1>
+      <p class="sub">${isSignup
+        ? 'sua conta guarda as tarefas, o histórico de dias e a agenda em qualquer aparelho.'
+        : 'entre para ver suas tarefas e compromissos do jeito que você deixou.'}</p>
+
+      ${!CONFIGURED ? `
+        <div class="setup-note">
+          O app está rodando só neste navegador. Para sincronizar, preencha
+          <code>SUPABASE_URL</code> e <code>SUPABASE_ANON_KEY</code> no topo do arquivo.
+        </div>` : ''}
+
+      <div class="auth-card">
+        ${authMsg ? `<div class="auth-msg ${authMsg.type}">${escapeHtml(authMsg.text)}</div>` : ''}
+        <form id="auth-form" autocomplete="on">
+          <span class="field-label">e-mail</span>
+          <input type="email" id="auth-email" placeholder="voce@email.com" autocomplete="email" required/>
+          <span class="field-label">senha</span>
+          <input type="password" id="auth-pass" placeholder="${isSignup ? 'mínimo 6 caracteres' : 'sua senha'}"
+                 autocomplete="${isSignup ? 'new-password' : 'current-password'}" minlength="6" required/>
+          <button type="submit" class="auth-submit" id="auth-submit" ${authBusy ? 'disabled' : ''}>
+            ${authBusy ? 'aguarde…' : (isSignup ? 'criar conta' : 'entrar')}
+          </button>
+        </form>
+        <p class="auth-switch">
+          ${isSignup ? 'já tem conta?' : 'ainda não tem conta?'}
+          <button type="button" id="auth-switch">${isSignup ? 'entrar' : 'criar agora'}</button>
+        </p>
+      </div>
+    </div>
+  `;
+}
+
+function renderHeader(){
+  const now = new Date();
+  const doneCount = tasks.filter(t => isDone(t.id)).length;
+  const total = tasks.length;
+  const pct = total ? Math.round((doneCount/total)*100) : 0;
+  const r = 18, c = 2*Math.PI*r;
+  const offset = c - (pct/100)*c;
+  const mail = session && session.user ? session.user.email : null;
+
+  return `
+    <header>
+      ${mail ? `
+        <div class="account-row">
+          <span class="account-mail">salvando na conta <b>${escapeHtml(mail)}</b></span>
+          <button class="link-btn" id="signout-btn">sair</button>
+        </div>` : `
+        <div class="account-row">
+          <span class="account-mail">salvando só neste navegador</span>
+        </div>`}
+      <p class="day-label">${DIAS[now.getDay()]}</p>
+      <p class="date-sub">${now.getDate()} de ${MESES[now.getMonth()]}</p>
+      <div class="progress-card">
+        <svg class="ring" viewBox="0 0 44 44">
+          <circle cx="22" cy="22" r="${r}" fill="none" stroke="var(--line)" stroke-width="4"/>
+          <circle cx="22" cy="22" r="${r}" fill="none" stroke="var(--moss)" stroke-width="4"
+            stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${offset}"
+            transform="rotate(-90 22 22)"/>
+        </svg>
+        <p class="progress-text">${ total ? `<strong>${doneCount} de ${total}</strong> feitas hoje` : 'adicione sua primeira tarefa' }</p>
+      </div>
+      <div class="tabs">
+        <button data-view="rotina" class="${view==='rotina' ? 'active' : ''}">rotina</button>
+        <button data-view="agenda" class="${view==='agenda' ? 'active' : ''}">agenda</button>
+      </div>
+    </header>
+  `;
+}
+
+function renderRotina(){
+  if(tasks.length === 0){
+    return `
+      <div class="empty-state">
+        ${emptyGlyph}
+        <p>Sua rotina está vazia.<br>Toque no + para adicionar tarefas que quer repetir todo dia.</p>
+      </div>
+    `;
+  }
+  return `
+    <ul class="tasks">
+      ${tasks.map(t => `
+        <li class="task ${isDone(t.id) ? 'done' : ''}" data-id="${t.id}">
+          <button class="check" data-action="toggle" data-id="${t.id}" aria-label="marcar como feito">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M2 7L5.5 10.5L12 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <div class="task-body">
+            <div class="task-name">${escapeHtml(t.name)}</div>
+            <div class="streak">
+              ${streakDots(t.id).map(cls => `<i class="${cls}"></i>`).join('')}
+            </div>
+          </div>
+          <button class="item-remove" data-action="remove-task" data-id="${t.id}" aria-label="remover tarefa">&times;</button>
+        </li>
+      `).join('')}
+    </ul>
+  `;
+}
+
+function renderAgenda(){
+  if(events.length === 0){
+    return `
+      <div class="empty-state">
+        ${emptyGlyph}
+        <p>Sua agenda está vazia.<br>Toque no + para marcar um compromisso no dia e horário que quiser.</p>
+      </div>
+    `;
+  }
+  const today = todayKey();
+  const upcoming = events
+    .filter(e => e.date >= today)
+    .sort((a,b) => (a.date+(a.time||'99:99')).localeCompare(b.date+(b.time||'99:99')));
+  const past = events
+    .filter(e => e.date < today)
+    .sort((a,b) => (b.date+(b.time||'')).localeCompare(a.date+(a.time||'')));
+  const ordered = [...upcoming, ...past];
+
+  const groups = [];
+  ordered.forEach(e => {
+    let g = groups.find(g => g.key === e.date);
+    if(!g){ g = { key: e.date, items: [] }; groups.push(g); }
+    g.items.push(e);
+  });
+
+  return groups.map(g => `
+    <div class="day-group">
+      <p class="day-group-label">${dayGroupLabel(g.key)} <span class="n">· ${g.items.length}</span></p>
+      <ul class="events">
+        ${g.items.map(e => `
+          <li class="event" data-id="${e.id}">
+            <div class="event-time ${e.time ? '' : 'notime'}">${e.time ? e.time : '—'}</div>
+            <div class="event-body">
+              <div class="event-title">${escapeHtml(e.title)}</div>
+            </div>
+            <button class="item-remove" data-action="remove-event" data-id="${e.id}" aria-label="remover compromisso">&times;</button>
+          </li>
+        `).join('')}
+      </ul>
+    </div>
+  `).join('');
+}
+
+function renderSheet(){
+  if(view === 'rotina'){
+    return `
+      <div class="sheet-overlay ${sheetOpen ? 'open' : ''}" id="sheet-overlay">
+        <div class="sheet" id="sheet">
+          <div class="sheet-handle"></div>
+          <p class="sheet-title">nova tarefa</p>
+          <form id="add-form">
+            <span class="field-label">o que você quer repetir todo dia?</span>
+            <input type="text" id="new-task" placeholder="ex: beber água, ler 10 páginas…" autocomplete="off" maxlength="60"/>
+            <button type="submit" class="sheet-submit" id="submit-btn" disabled>adicionar tarefa</button>
+          </form>
+        </div>
+      </div>
+    `;
+  }
+
+  const days = nextNDays(21);
+  const quickTimes = [
+    { label: 'manhã', value: '09:00' },
+    { label: 'tarde', value: '14:00' },
+    { label: 'noite', value: '19:00' },
+  ];
+
+  return `
+    <div class="sheet-overlay ${sheetOpen ? 'open' : ''}" id="sheet-overlay">
+      <div class="sheet" id="sheet">
+        <div class="sheet-handle"></div>
+        <p class="sheet-title">novo compromisso</p>
+        <form id="add-form">
+          <span class="field-label">o que é?</span>
+          <input type="text" id="new-event-title" placeholder="ex: reunião com o time, dentista…" autocomplete="off" maxlength="80"/>
+
+          <span class="field-label">qual dia?</span>
+          <div class="date-strip" id="date-strip">
+            ${days.map(k => {
+              const d = parseKey(k);
+              return `<div class="date-pill ${k === selectedDate ? 'selected' : ''}" data-date="${k}">
+                <span class="dow">${DIAS_ABR[d.getDay()]}</span>
+                <span class="num">${d.getDate()}</span>
+              </div>`;
+            }).join('')}
+          </div>
+
+          <span class="field-label">que horas?</span>
+          <div class="time-row">
+            ${quickTimes.map(qt => `
+              <button type="button" class="time-chip ${selectedTime === qt.value ? 'selected' : ''}" data-time="${qt.value}">${qt.label}</button>
+            `).join('')}
+            <div class="time-input-wrap">
+              <input type="time" id="time-input" value="${selectedTime}"/>
+            </div>
+          </div>
+
+          <button type="submit" class="sheet-submit" id="submit-btn" disabled>adicionar à agenda</button>
+        </form>
+      </div>
+    </div>
+  `;
+}
+
+function openSheet(){
+  selectedDate = todayKey();
+  selectedTime = '';
+  sheetOpen = true;
+  render();
+  const input = document.getElementById(view === 'rotina' ? 'new-task' : 'new-event-title');
+  if(input) setTimeout(() => input.focus(), 250);
+}
+function closeSheet(){
+  sheetOpen = false;
+  render();
+}
+
+function render(){
+  const app = document.getElementById('app');
+
+  if(screen === 'auth'){
+    app.innerHTML = renderAuth();
+    bindAuth(app);
+    return;
+  }
+
+  app.innerHTML = `
+    ${renderHeader()}
+    <main>
+      ${ view === 'rotina' ? renderRotina() : renderAgenda() }
+    </main>
+    <button class="fab" id="fab" aria-label="adicionar">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="white" stroke-width="2.2" stroke-linecap="round"/></svg>
+    </button>
+    ${renderSheet()}
+  `;
+
+  const signoutBtn = document.getElementById('signout-btn');
+  if(signoutBtn) signoutBtn.addEventListener('click', signOut);
+
+  // tabs
+  app.querySelectorAll('.tabs button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      view = btn.dataset.view;
+      render();
+    });
+  });
+
+  // rotina actions
+  app.querySelectorAll('[data-action="toggle"]').forEach(btn => {
+    btn.addEventListener('click', () => toggleDone(btn.dataset.id));
+  });
+  app.querySelectorAll('[data-action="remove-task"]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      try{
+        await backend.removeTask(btn.dataset.id);
+        render();
+      }catch(e){
+        render();
+        toast('não deu para remover a tarefa.');
+      }
+    });
+  });
+  app.querySelectorAll('[data-action="remove-event"]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      try{
+        await backend.removeEvent(btn.dataset.id);
+        render();
+      }catch(e){
+        render();
+        toast('não deu para remover o compromisso.');
+      }
+    });
+  });
+
+  // fab + sheet
+  document.getElementById('fab').addEventListener('click', openSheet);
+  const overlay = document.getElementById('sheet-overlay');
+  overlay.addEventListener('click', (e) => { if(e.target === overlay) closeSheet(); });
+
+  const form = document.getElementById('add-form');
+  const submitBtn = document.getElementById('submit-btn');
+
+  if(view === 'rotina'){
+    const input = document.getElementById('new-task');
+    input.addEventListener('input', () => { submitBtn.disabled = !input.value.trim(); });
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = input.value.trim();
+      if(!name) return;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'salvando…';
+      try{
+        await backend.addTask(name);
+        closeSheet();
+      }catch(err){
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'adicionar tarefa';
+        toast('não deu para salvar a tarefa.');
+      }
+    });
+  } else {
+    const titleInput = document.getElementById('new-event-title');
+    const timeInput = document.getElementById('time-input');
+
+    function refreshSubmit(){ submitBtn.disabled = !titleInput.value.trim(); }
+    titleInput.addEventListener('input', refreshSubmit);
+    refreshSubmit();
+
+    app.querySelectorAll('.date-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        selectedDate = pill.dataset.date;
+        app.querySelectorAll('.date-pill').forEach(p => p.classList.remove('selected'));
+        pill.classList.add('selected');
+      });
+    });
+
+    app.querySelectorAll('.time-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        selectedTime = chip.dataset.time;
+        timeInput.value = selectedTime;
+        app.querySelectorAll('.time-chip').forEach(c => c.classList.remove('selected'));
+        chip.classList.add('selected');
+      });
+    });
+    timeInput.addEventListener('input', () => {
+      selectedTime = timeInput.value;
+      app.querySelectorAll('.time-chip').forEach(c => c.classList.toggle('selected', c.dataset.time === selectedTime));
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const title = titleInput.value.trim();
+      if(!title) return;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'salvando…';
+      try{
+        await backend.addEvent({ title, date: selectedDate, time: timeInput.value || '' });
+        closeSheet();
+      }catch(err){
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'adicionar à agenda';
+        toast('não deu para salvar o compromisso.');
+      }
+    });
+  }
+}
+
+function bindAuth(app){
+  const form = document.getElementById('auth-form');
+  const emailEl = document.getElementById('auth-email');
+  const passEl = document.getElementById('auth-pass');
+
+  document.getElementById('auth-switch').addEventListener('click', () => {
+    authMode = authMode === 'login' ? 'signup' : 'login';
+    authMsg = null;
+    render();
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = emailEl.value.trim();
+    const password = passEl.value;
+    if(!email || password.length < 6){
+      authMsg = { type:'err', text:'preencha o e-mail e uma senha de 6 caracteres ou mais.' };
+      return render();
+    }
+    if(!CONFIGURED){
+      // sem Supabase configurado: segue direto no modo local
+      screen = 'app';
+      await backend.load();
+      return render();
+    }
+    authBusy = true; authMsg = null; render();
+    try{
+      const s = authMode === 'signup'
+        ? await signUp(email, password)
+        : await signIn(email, password);
+
+      if(!s){
+        // conta criada, mas o projeto exige confirmação por e-mail
+        authBusy = false;
+        authMode = 'login';
+        authMsg = { type:'ok', text:'conta criada. confirme o e-mail que enviamos e volte para entrar.' };
+        return render();
+      }
+      session = s;
+      await enterApp();
+    }catch(err){
+      authBusy = false;
+      authMsg = { type:'err', text: authErrorText(err) };
+      render();
+    }
+  });
+
+  setTimeout(() => emailEl && emailEl.focus(), 120);
+}
+
+async function enterApp(){
+  try{
+    await backend.load();
+  }catch(e){
+    toast('não deu para carregar seus dados. rode o script SQL no Supabase.');
+  }
+  authBusy = false;
+  screen = 'app';
+  render();
+}
+
+/* ============================================================
+   8. BOOT
+   ============================================================ */
+(async function init(){
+  if(!CONFIGURED){
+    backend = localBackend;
+    screen = 'auth';   // continua pedindo e-mail/senha, mas roda local
+    return render();
+  }
+
+  const { data } = await sb.auth.getSession();
+  session = data.session;
+
+  sb.auth.onAuthStateChange((_evt, s) => {
+    const wasLogged = !!session;
+    session = s;
+    if(!s && wasLogged){
+      screen = 'auth';
+      tasks = []; log = {}; events = [];
+      render();
+    }
+  });
+
+  if(session){
+    await enterApp();
+  } else {
+    screen = 'auth';
+    render();
+  }
+})();
+</script>
+</body>
+</html>
