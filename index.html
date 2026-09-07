@@ -2,2553 +2,1101 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Painel Pessoal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#ECEFF5">
+<title>Organizador do Dia</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
   :root{
-    --bg: #ECEDE4;
+    --canvas: #ECEFF5;
+    --canvas-2: #E1E6F0;
     --surface: #FFFFFF;
-    --surface-soft: #F5F5EE;
-    --ink: #1C1F26;
-    --ink-soft: #656B60;
-    --ink-faint: #A2A69A;
-    --line: #E3E4D9;
-    --moss: #4B6142;
-    --moss-deep: #34432D;
-    --moss-soft: #E3E9DC;
-    --amber: #C1832E;
-    --amber-soft: #F4E5CC;
-    --clay: #A6493A;
-    --shadow-sm: 0 1px 2px rgba(28,31,38,.05);
-    --shadow-md: 0 6px 20px rgba(28,31,38,.08);
-    --shadow-fab: 0 8px 22px rgba(75,97,66,.38);
-    --radius: 18px;
-    --app-max: 480px;
+    --surface-soft: #F5F7FB;
+    --ink: #1B2A4A;
+    --ink-soft: #57678A;
+    --ink-faint: #8A96B3;
+    --line: #DCE1EE;
+    --amber: #F0A202;
+    --amber-soft: #FCEBC7;
+    --sage: #4F8A6B;
+    --sage-soft: #DCEEE3;
+    --clay: #C1573B;
+    --clay-soft: #F6DFD8;
+    --gold: #E8B923;
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --radius-sm: 9px;
+    --shadow-1: 0 1px 2px rgba(27,42,74,0.06), 0 8px 24px -12px rgba(27,42,74,0.18);
+    --font-display: 'Sora', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
   }
+
   *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html,body{ height:100%; }
+  html{ -webkit-text-size-adjust: 100%; }
   body{
     margin:0;
-    background: var(--bg);
+    background:
+      radial-gradient(900px 500px at 20% -10%, var(--canvas-2), transparent),
+      var(--canvas);
     color: var(--ink);
-    font-family: 'Work Sans', sans-serif;
-    display:flex;
-    justify-content:center;
-    min-height:100vh;
-  }
-  .app{
-    width:100%;
-    max-width: var(--app-max);
-    min-height:100vh;
-    background: var(--bg);
-    display:flex;
-    flex-direction:column;
-    position:relative;
-    overflow-x:hidden;
-    transition: max-width .15s ease;
-  }
-  :focus-visible{ outline: 2px solid var(--moss); outline-offset: 2px; }
-
-  /* Header */
-  header{
-    padding: 30px 20px 16px;
-  }
-  .account-row{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    margin-bottom:16px;
-  }
-  .account-mail{
-    font-size:12.5px;
-    color: var(--ink-soft);
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-  }
-  .account-mail b{ color: var(--moss-deep); font-weight:600; }
-  .link-btn{
-    border:none;
-    background: var(--surface);
-    color: var(--ink-soft);
-    font-family:'Work Sans', sans-serif;
-    font-size:12.5px;
-    font-weight:600;
-    padding: 7px 12px;
-    border-radius: 999px;
-    box-shadow: var(--shadow-sm);
-    cursor:pointer;
-    flex-shrink:0;
-  }
-  .link-btn:hover{ color: var(--clay); }
-  .day-label{
-    font-family:'Fraunces', serif;
-    font-size: 38px;
-    font-weight: 500;
-    line-height:1.05;
-    margin:0 0 4px;
-    font-variation-settings: 'opsz' 40;
-    letter-spacing: -0.01em;
-    color: var(--ink);
-  }
-  .date-sub{
-    font-size:14px;
-    color: var(--ink-soft);
-    margin:0 0 20px;
-  }
-  .progress-card{
-    background: var(--surface);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-sm);
-    padding: 16px 18px;
-    display:flex;
-    align-items:center;
-    gap:14px;
-    margin-bottom:18px;
-  }
-  .ring{
-    width:46px; height:46px; flex-shrink:0;
-  }
-  .ring circle{ transition: stroke-dashoffset .4s ease; }
-  .progress-text{
-    font-size:14px;
-    color: var(--ink-soft);
-    margin:0;
-  }
-  .progress-text strong{
-    color: var(--ink);
-    font-weight:600;
-  }
-
-  /* Tabs */
-  .tabs{
-    display:flex;
-    background: var(--surface-soft);
-    border-radius: 999px;
-    padding: 4px;
-    gap:2px;
-  }
-  .tabs button{
-    flex:1;
-    border:none;
-    background:transparent;
-    font-family:'Work Sans', sans-serif;
-    font-size:14px;
-    font-weight:500;
-    color: var(--ink-soft);
-    padding: 10px 0;
-    border-radius: 999px;
-    cursor:pointer;
-    transition: background .18s ease, color .18s ease, box-shadow .18s ease;
-  }
-  .tabs button.active{
-    background: var(--moss);
-    color: white;
-    box-shadow: var(--shadow-sm);
-  }
-
-  /* Task list */
-  main{
-    flex:1;
-    padding: 4px 20px 110px;
-  }
-  .empty-state{
-    text-align:center;
-    padding: 56px 24px;
-    color: var(--ink-soft);
-    background: var(--surface);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-sm);
-    margin-top:14px;
-  }
-  .empty-state .glyph{
-    width:40px; height:40px; margin:0 auto 14px;
-    color: var(--ink-faint);
-  }
-  .empty-state p{ margin:0; font-size:14.5px; line-height:1.6; }
-
-  ul.tasks{ list-style:none; margin:14px 0 0; padding:0; display:flex; flex-direction:column; gap:10px; }
-  li.task{
-    display:flex;
-    align-items:flex-start;
-    gap:13px;
-    padding: 15px 14px;
-    background: var(--surface);
-    border-radius: 14px;
-    box-shadow: var(--shadow-sm);
-    transition: box-shadow .15s ease;
-  }
-  .check{
-    width:25px; height:25px;
-    border-radius: 8px;
-    border: 1.5px solid var(--ink-faint);
-    background: transparent;
-    flex-shrink:0;
-    margin-top:1px;
-    cursor:pointer;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    transition: background .15s ease, border-color .15s ease, transform .1s ease;
-  }
-  .check:active{ transform: scale(.9); }
-  .check svg{ opacity:0; transform: scale(.6); transition: opacity .15s ease, transform .15s ease; }
-  li.task.done{ box-shadow:none; background: var(--surface-soft); }
-  li.task.done .check{ background: var(--moss); border-color: var(--moss); }
-  li.task.done .check svg{ opacity:1; transform: scale(1); }
-
-  .task-body{ flex:1; min-width:0; }
-  .task-name{
-    font-size:15.5px;
-    font-weight:500;
-    line-height:1.35;
-    transition: color .15s ease;
-  }
-  li.task.done .task-name{ color: var(--ink-faint); text-decoration: line-through; text-decoration-color: var(--ink-faint); text-decoration-thickness: 1.2px; }
-
-  .streak{
-    display:flex;
-    gap:4px;
-    margin-top:9px;
-  }
-  .streak i{
-    width:13px; height:13px;
-    border-radius:4px;
-    background: var(--line);
-    display:block;
-  }
-  .streak i.hit{ background: var(--amber); }
-
-  .item-remove{
-    border:none; background:none; color: var(--ink-faint);
-    font-size:19px; line-height:1; padding:4px 4px; cursor:pointer;
-    opacity:.7; flex-shrink:0;
-  }
-  .item-remove:hover{ opacity:1; color: var(--clay); }
-
-  /* Agenda */
-  .day-group{ margin-top:20px; }
-  .day-group:first-child{ margin-top:14px; }
-  .day-group-label{
-    font-size:12.5px;
-    font-weight:600;
-    color: var(--moss-deep);
-    margin: 0 4px 8px;
-    display:flex;
-    align-items:baseline;
-    gap:7px;
-    text-transform: lowercase;
-  }
-  .day-group-label .n{
-    color: var(--ink-faint);
-    font-weight:500;
-  }
-  ul.events{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
-  li.event{
-    display:flex;
-    gap:13px;
-    padding: 13px 14px;
-    background: var(--surface);
-    border-radius: 14px;
-    box-shadow: var(--shadow-sm);
-    align-items:center;
-  }
-  .event-time{
-    width:50px;
-    flex-shrink:0;
-    font-size:13px;
-    font-weight:600;
-    color: var(--moss-deep);
-    background: var(--moss-soft);
-    border-radius: 8px;
-    padding: 5px 0;
-    text-align:center;
-    font-variant-numeric: tabular-nums;
-  }
-  .event-time.notime{ color: var(--ink-faint); background: var(--surface-soft); }
-  .event-body{ flex:1; min-width:0; }
-  .event-title{ font-size:15px; font-weight:500; line-height:1.4; }
-
-  /* FAB */
-  .fab{
-    position:fixed;
-    bottom: calc(24px + env(safe-area-inset-bottom));
-    right: max(20px, calc((100vw - var(--app-max)) / 2 + 20px));
-    width:58px; height:58px;
-    border-radius:50%;
-    background: var(--moss);
-    color:white;
-    border:none;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    box-shadow: var(--shadow-fab);
-    cursor:pointer;
-    transition: transform .12s ease;
-    z-index: 20;
-  }
-  .fab:active{ transform: scale(.94); }
-
-  /* Sheet */
-  .sheet-overlay{
-    position:fixed; inset:0;
-    background: rgba(20,22,18,.42);
-    z-index: 30;
-    opacity:0;
-    pointer-events:none;
-    transition: opacity .22s ease;
-    display:flex;
-    justify-content:center;
-    align-items:flex-end;
-  }
-  .sheet-overlay.open{ opacity:1; pointer-events:auto; }
-  .sheet{
-    width:100%;
-    max-width:480px;
-    background: var(--surface);
-    border-radius: 26px 26px 0 0;
-    padding: 10px 20px calc(22px + env(safe-area-inset-bottom));
-    transform: translateY(100%);
-    transition: transform .28s cubic-bezier(.32,.72,0,1);
-    box-shadow: 0 -8px 30px rgba(28,31,38,.14);
-  }
-  .sheet-overlay.open .sheet{ transform: translateY(0); }
-  .sheet-handle{
-    width:36px; height:4px; background: var(--line); border-radius: 999px;
-    margin: 6px auto 16px;
-  }
-  .sheet-title{
-    font-family:'Fraunces', serif;
-    font-size:21px;
-    font-weight:500;
-    margin: 0 0 16px;
-    font-variation-settings: 'opsz' 30;
-  }
-  .field-label{
-    font-size:12px;
-    font-weight:600;
-    color: var(--ink-soft);
-    margin: 0 0 8px;
-    display:block;
-  }
-  .sheet input[type="text"]{
-    width:100%;
-    border:none;
-    background: var(--surface-soft);
-    border-radius: 12px;
-    padding: 14px 14px;
-    font-family:'Work Sans', sans-serif;
-    font-size:15.5px;
-    color: var(--ink);
-    outline:none;
-    margin-bottom:18px;
-  }
-  .sheet input::placeholder{ color: var(--ink-faint); }
-
-  .date-strip{
-    display:flex;
-    gap:8px;
-    overflow-x:auto;
-    padding: 2px 2px 6px;
-    margin-bottom:18px;
-    scrollbar-width:none;
-  }
-  .date-strip::-webkit-scrollbar{ display:none; }
-  .date-pill{
-    flex-shrink:0;
-    width:52px;
-    padding: 10px 0 9px;
-    border-radius: 14px;
-    background: var(--surface-soft);
-    border: 1.5px solid transparent;
-    text-align:center;
-    cursor:pointer;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:3px;
-  }
-  .date-pill .dow{ font-size:11px; color: var(--ink-faint); font-weight:600; text-transform:lowercase; }
-  .date-pill .num{ font-size:16px; color: var(--ink); font-weight:600; font-family:'Fraunces', serif; }
-  .date-pill.selected{ background: var(--moss); }
-  .date-pill.selected .dow{ color: var(--moss-soft); }
-  .date-pill.selected .num{ color: white; }
-
-  .time-row{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    margin-bottom: 22px;
-    flex-wrap:wrap;
-  }
-  .time-chip{
-    border:none;
-    background: var(--surface-soft);
-    color: var(--ink-soft);
-    font-size:13px;
-    font-weight:600;
-    padding: 9px 13px;
-    border-radius: 999px;
-    cursor:pointer;
-  }
-  .time-chip.selected{ background: var(--moss); color: white; }
-  .time-input-wrap{
-    margin-left:auto;
-    display:flex;
-    align-items:center;
-    gap:8px;
-  }
-  .sheet input[type="time"]{
-    border:none;
-    background: var(--surface-soft);
-    border-radius: 10px;
-    padding: 9px 10px;
-    font-family:'Work Sans', sans-serif;
-    font-size:13.5px;
-    color: var(--ink);
-    outline:none;
-  }
-
-  .sheet-submit{
-    width:100%;
-    border:none;
-    background: var(--moss);
-    color:white;
-    font-family:'Work Sans', sans-serif;
-    font-weight:600;
-    font-size:15px;
-    padding: 15px 0;
-    border-radius: 14px;
-    cursor:pointer;
-    transition: opacity .15s ease, transform .1s ease;
-  }
-  .sheet-submit:disabled{ opacity:.4; }
-  .sheet-submit:not(:disabled):active{ transform: scale(.98); }
-
-  .loading{
-    display:flex; align-items:center; justify-content:center;
-    height:100vh; color: var(--ink-soft); font-size:14px;
-  }
-
-  /* ---------- Tela de entrada ---------- */
-  .auth{
-    flex:1;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    padding: 40px 24px calc(40px + env(safe-area-inset-bottom));
-  }
-  .auth-mark{
-    width:44px; height:44px;
-    border-radius: 14px;
-    background: var(--moss);
-    color:white;
-    display:flex; align-items:center; justify-content:center;
-    margin-bottom: 22px;
-  }
-  .auth h1{
-    font-family:'Fraunces', serif;
-    font-size: 34px;
-    font-weight:500;
-    font-variation-settings: 'opsz' 40;
-    letter-spacing:-0.01em;
-    margin: 0 0 8px;
-    line-height:1.1;
-  }
-  .auth .sub{
-    font-size:14.5px;
-    color: var(--ink-soft);
-    margin: 0 0 28px;
-    line-height:1.55;
-  }
-  .auth-card{
-    background: var(--surface);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-md);
-    padding: 20px 18px;
-  }
-  .auth-card input{
-    width:100%;
-    border:none;
-    background: var(--surface-soft);
-    border-radius: 12px;
-    padding: 14px;
-    font-family:'Work Sans', sans-serif;
-    font-size:15.5px;
-    color: var(--ink);
-    outline:none;
-    margin-bottom:14px;
-  }
-  .auth-card input::placeholder{ color: var(--ink-faint); }
-  .auth-submit{
-    width:100%;
-    border:none;
-    background: var(--moss);
-    color:white;
-    font-family:'Work Sans', sans-serif;
-    font-weight:600;
-    font-size:15px;
-    padding: 15px 0;
-    border-radius: 14px;
-    cursor:pointer;
-    margin-top: 4px;
-    transition: opacity .15s ease, transform .1s ease;
-  }
-  .auth-submit:disabled{ opacity:.45; cursor:default; }
-  .auth-submit:not(:disabled):active{ transform: scale(.98); }
-  .auth-switch{
-    text-align:center;
-    font-size:13.5px;
-    color: var(--ink-soft);
-    margin: 18px 0 0;
-  }
-  .auth-switch button{
-    border:none; background:none; padding:0;
-    font-family:'Work Sans', sans-serif;
-    font-size:13.5px; font-weight:600;
-    color: var(--moss);
-    cursor:pointer;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-  .auth-msg{
-    font-size:13.5px;
-    line-height:1.5;
-    border-radius: 12px;
-    padding: 11px 13px;
-    margin-bottom: 14px;
-  }
-  .auth-msg.err{ background: #F6E2DE; color: #7C3125; }
-  .auth-msg.ok{ background: var(--moss-soft); color: var(--moss-deep); }
-
-  .setup-note{
-    background: var(--amber-soft);
-    color: #6B4712;
-    border-radius: 12px;
-    padding: 13px 14px;
-    font-size:13px;
-    line-height:1.55;
-    margin-bottom:16px;
-  }
-  .setup-note code{ font-family: ui-monospace, monospace; font-size:12.5px; }
-
-  /* toast */
-  .toast{
-    position:fixed;
-    bottom: calc(96px + env(safe-area-inset-bottom));
-    left:50%;
-    transform: translate(-50%, 12px);
-    background: var(--ink);
-    color:white;
-    font-size:13.5px;
-    padding: 11px 16px;
-    border-radius: 999px;
-    box-shadow: var(--shadow-md);
-    opacity:0;
-    pointer-events:none;
-    transition: opacity .2s ease, transform .2s ease;
-    z-index: 60;
-    max-width: 90vw;
-    text-align:center;
-  }
-  .toast.show{ opacity:1; transform: translate(-50%, 0); }
-
-  /* ---------- Tabs (agora com scroll horizontal p/ 6 abas) ---------- */
-  .tabs-scroll{
-    overflow-x:auto;
-    scrollbar-width:none;
-    margin: 0 -20px;
-    padding: 0 20px;
-  }
-  .tabs-scroll::-webkit-scrollbar{ display:none; }
-  .tabs{ width:max-content; min-width:100%; }
-  .tabs button{ padding: 10px 16px; white-space:nowrap; flex:none; }
-
-  /* ---------- Visão da Vida (home) ---------- */
-  .home-greeting{
-    font-family:'Fraunces', serif;
-    font-size: 30px;
-    font-weight:500;
-    margin: 4px 0 2px;
-    font-variation-settings: 'opsz' 40;
-  }
-  .home-date{ font-size:13.5px; color: var(--ink-soft); margin: 0 0 18px; }
-  .home-grid{ display:flex; flex-direction:column; gap:10px; }
-  .home-card{
-    background: var(--surface);
-    border-radius: 16px;
-    box-shadow: var(--shadow-sm);
-    padding: 15px 16px;
-    display:flex;
-    align-items:center;
-    gap:13px;
-    cursor:pointer;
-    transition: box-shadow .15s ease, transform .1s ease;
-  }
-  .home-card:active{ transform: scale(.98); }
-  .home-card .ic{
-    width:38px; height:38px; border-radius:11px;
-    background: var(--moss-soft); color: var(--moss-deep);
-    display:flex; align-items:center; justify-content:center;
-    font-size:18px; flex-shrink:0;
-  }
-  .home-card .body{ flex:1; min-width:0; }
-  .home-card .title{ font-size:14.5px; font-weight:600; color: var(--ink); }
-  .home-card .sub{ font-size:12.5px; color: var(--ink-soft); margin-top:2px; }
-  .home-card .chev{ color: var(--ink-faint); flex-shrink:0; }
-  .home-card.attn .ic{ background: var(--amber-soft); color:#6B4712; }
-
-  .ai-hero{
-    margin-top: 6px;
-    background: linear-gradient(135deg, var(--moss) 0%, var(--moss-deep) 100%);
-    border-radius: var(--radius);
-    padding: 18px 18px 20px;
-    color: white;
-    box-shadow: var(--shadow-md);
-    cursor:pointer;
-  }
-  .ai-hero:active{ transform: scale(.98); }
-  .ai-hero .label{ font-size:12px; font-weight:600; opacity:.85; text-transform:uppercase; letter-spacing:.04em; }
-  .ai-hero .q{ font-family:'Fraunces', serif; font-size:19px; font-weight:500; margin: 6px 0 2px; line-height:1.3; }
-  .ai-hero .hint{ font-size:12.5px; opacity:.8; margin-top:6px; }
-
-  /* ---------- Genérico: cabeçalho de seção + botão IA ---------- */
-  .section-top{ display:flex; align-items:center; justify-content:space-between; margin: 14px 4px 10px; }
-  .section-hint{ font-size:12.5px; color: var(--ink-soft); margin: -2px 4px 12px; line-height:1.5; }
-  .ai-btn{
-    display:flex; align-items:center; gap:6px;
-    border:none; background: var(--moss-soft); color: var(--moss-deep);
-    font-family:'Work Sans', sans-serif; font-size:12.5px; font-weight:600;
-    padding: 8px 13px; border-radius: 999px; cursor:pointer; flex-shrink:0;
-  }
-  .ai-btn:active{ transform: scale(.96); }
-  .ai-btn[disabled]{ opacity:.5; }
-  .ai-btn.big{ width:100%; justify-content:center; padding:13px 0; font-size:13.5px; margin-top:6px; }
-
-  /* ---------- Quero Fazer ---------- */
-  ul.wtd{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:9px; }
-  li.wtd-item{
-    background: var(--surface); border-radius: 14px; box-shadow: var(--shadow-sm);
-    padding: 13px 14px; display:flex; flex-direction:column; gap:8px;
-  }
-  .wtd-top{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
-  .wtd-title{ font-size:15px; font-weight:500; line-height:1.4; }
-  .wtd-desc{ font-size:12.5px; color: var(--ink-soft); margin-top:3px; line-height:1.5; }
-  .wtd-meta{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-  .status-pill{
-    font-size:11px; font-weight:600; padding: 5px 10px; border-radius:999px;
-    background: var(--surface-soft); color: var(--ink-soft); border:none;
-    font-family:'Work Sans', sans-serif; cursor:pointer;
-  }
-  .status-pill.s-quero{ background: var(--moss-soft); color: var(--moss-deep); }
-  .status-pill.s-consid{ background: var(--amber-soft); color:#6B4712; }
-  .status-pill.s-projeto{ background: var(--moss); color:white; }
-  .status-pill.s-concluido{ background: var(--surface-soft); color: var(--ink-faint); text-decoration: line-through; }
-  .status-pill.s-descartado{ background: var(--surface-soft); color: var(--ink-faint); }
-  .wtd-cat{ font-size:11px; color: var(--ink-faint); font-weight:600; }
-  .wtd-actions{ display:flex; gap:8px; margin-top:2px; }
-  .mini-btn{
-    border:none; background: var(--surface-soft); color: var(--ink-soft);
-    font-family:'Work Sans', sans-serif; font-size:11.5px; font-weight:600;
-    padding: 7px 11px; border-radius:10px; cursor:pointer;
-  }
-  .mini-btn.primary{ background: var(--moss); color:white; }
-  .mini-btn.danger:active{ color: var(--clay); }
-
-  /* ---------- Projetos ---------- */
-  ul.projects{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
-  li.project-card{
-    background: var(--surface); border-radius: 16px; box-shadow: var(--shadow-sm);
-    padding: 15px 16px; cursor:pointer;
-  }
-  li.project-card:active{ transform: scale(.99); }
-  .project-top{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:4px; }
-  .project-name{ font-size:15.5px; font-weight:600; }
-  .project-cat{ font-size:11px; color: var(--ink-faint); font-weight:600; margin-bottom:10px; }
-  .progress-row{ display:flex; align-items:center; gap:10px; }
-  .progress-bar-track{ flex:1; height:7px; background: var(--surface-soft); border-radius:999px; overflow:hidden; }
-  .progress-bar-fill{ height:100%; background: var(--moss); border-radius:999px; transition: width .3s ease; }
-  .progress-pct{ font-size:12px; font-weight:600; color: var(--ink-soft); width:34px; text-align:right; flex-shrink:0; }
-  .project-foot{ display:flex; gap:12px; margin-top:9px; font-size:12px; color: var(--ink-soft); }
-  .status-tag{ font-size:11px; font-weight:600; padding:4px 9px; border-radius:8px; background: var(--surface-soft); color: var(--ink-soft); }
-  .status-tag.ativo{ background: var(--moss-soft); color: var(--moss-deep); }
-  .status-tag.pausado{ background: var(--amber-soft); color:#6B4712; }
-  .status-tag.concluido{ background: var(--surface-soft); color: var(--ink-faint); }
-
-  /* ---------- Modal de detalhe (projeto / quero fazer) ---------- */
-  .detail-overlay{
-    position:fixed; inset:0; background: rgba(20,22,18,.42); z-index:40;
-    opacity:0; pointer-events:none; transition: opacity .2s ease;
-    display:flex; justify-content:center;
-  }
-  .detail-overlay.open{ opacity:1; pointer-events:auto; }
-  .detail-sheet{
-    width:100%; max-width:480px; background: var(--bg);
-    height:100%; overflow-y:auto;
-    transform: translateX(100%); transition: transform .28s cubic-bezier(.32,.72,0,1);
-    padding: 0 0 60px;
-  }
-  .detail-overlay.open .detail-sheet{ transform: translateX(0); }
-  .detail-head{
-    position:sticky; top:0; background: var(--bg);
-    display:flex; align-items:center; justify-content:space-between;
-    padding: 18px 20px 10px; z-index:2;
-  }
-  .detail-back{
-    border:none; background: var(--surface); width:36px; height:36px; border-radius:50%;
-    display:flex; align-items:center; justify-content:center; box-shadow: var(--shadow-sm); cursor:pointer; color: var(--ink);
-  }
-  .detail-body{ padding: 6px 20px 20px; }
-  .detail-title-input{
-    width:100%; border:none; background:transparent; outline:none;
-    font-family:'Fraunces', serif; font-size:26px; font-weight:500;
-    font-variation-settings: 'opsz' 40; color: var(--ink); padding: 6px 0 12px; line-height:1.15;
-  }
-  .field-group{ margin-bottom:16px; }
-  .field-row2{ display:flex; gap:10px; }
-  .field-row2 .field-group{ flex:1; }
-  .detail-body input[type="text"], .detail-body input[type="date"], .detail-body input[type="number"],
-  .detail-body select, .detail-body textarea{
-    width:100%; border:none; background: var(--surface); border-radius:12px;
-    padding: 12px 13px; font-family:'Work Sans', sans-serif; font-size:14.5px; color: var(--ink);
-    outline:none; box-shadow: var(--shadow-sm); resize:vertical;
-  }
-  .detail-body textarea{ min-height:64px; line-height:1.5; }
-  .detail-body select{ appearance:none; -webkit-appearance:none; }
-
-  .steps-list{ list-style:none; margin: 8px 0 0; padding:0; display:flex; flex-direction:column; gap:7px; }
-  li.step-item{
-    display:flex; align-items:center; gap:10px; background: var(--surface);
-    border-radius:12px; padding: 10px 12px; box-shadow: var(--shadow-sm);
-  }
-  li.step-item.done .step-name{ color: var(--ink-faint); text-decoration: line-through; }
-  .step-check{
-    width:21px; height:21px; border-radius:6px; border: 1.5px solid var(--ink-faint);
-    flex-shrink:0; cursor:pointer; display:flex; align-items:center; justify-content:center; background:transparent;
-  }
-  .step-item.done .step-check{ background: var(--moss); border-color: var(--moss); }
-  .step-check svg{ opacity:0; transform:scale(.6); }
-  .step-item.done .step-check svg{ opacity:1; transform:scale(1); }
-  .step-name{ flex:1; font-size:14px; }
-  .step-remove{ border:none; background:none; color: var(--ink-faint); font-size:17px; cursor:pointer; padding:2px; }
-  .add-step-row{ display:flex; gap:8px; margin-top:9px; }
-  .add-step-row input{ flex:1; }
-  .add-step-btn{
-    border:none; background: var(--moss); color:white; width:38px; border-radius:10px; cursor:pointer; flex-shrink:0; font-size:18px;
-  }
-
-  .ai-panel{
-    background: var(--moss-soft); border-radius:14px; padding: 14px 15px; margin: 10px 0 16px;
-    font-size:13.5px; color: var(--moss-deep); line-height:1.6; white-space:pre-line;
-  }
-  .ai-panel .ai-title{ font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:.04em; margin-bottom:6px; opacity:.8; }
-  .ai-panel-actions{ display:flex; gap:8px; margin-top:12px; }
-  .ai-loading{ display:flex; align-items:center; gap:8px; font-size:13px; color: var(--ink-soft); padding: 10px 4px; }
-  .ai-dot{ width:6px; height:6px; border-radius:50%; background: var(--moss); animation: pulse 1s infinite ease-in-out; }
-  .ai-dot:nth-child(2){ animation-delay:.15s; } .ai-dot:nth-child(3){ animation-delay:.3s; }
-  @keyframes pulse{ 0%,100%{ opacity:.3; } 50%{ opacity:1; } }
-
-  .danger-zone{ margin-top: 26px; padding-top:16px; border-top:1px solid var(--line); }
-  .btn-delete{
-    border:none; background:none; color: var(--clay); font-family:'Work Sans', sans-serif;
-    font-size:13.5px; font-weight:600; cursor:pointer; padding:8px 0;
-  }
-
-  /* ---------- Semana ---------- */
-  .week-label{ font-size:12.5px; color: var(--ink-soft); margin: 2px 4px 14px; }
-  .week-card{ background: var(--surface); border-radius:16px; box-shadow: var(--shadow-sm); padding:16px; margin-bottom:12px; }
-  .week-card .wlabel{ display:flex; align-items:center; gap:7px; font-size:13px; font-weight:600; color: var(--ink); margin-bottom:10px; }
-  .priority-row{ display:flex; align-items:center; gap:9px; margin-bottom:8px; }
-  .priority-num{ width:20px; height:20px; border-radius:50%; background: var(--moss-soft); color: var(--moss-deep); font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-  .priority-row input{ flex:1; border:none; background: var(--surface-soft); border-radius:10px; padding:10px 11px; font-family:'Work Sans', sans-serif; font-size:14px; outline:none; }
-
-  /* ---------- Ação rápida (FAB) ---------- */
-  .quick-overlay{
-    position:fixed; inset:0; background: rgba(20,22,18,.42); z-index:35;
-    opacity:0; pointer-events:none; transition: opacity .2s ease; display:flex; justify-content:center; align-items:flex-end;
-  }
-  .quick-overlay.open{ opacity:1; pointer-events:auto; }
-  .quick-sheet{
-    width:100%; max-width:480px; background: var(--surface); border-radius:26px 26px 0 0;
-    padding: 10px 20px calc(20px + env(safe-area-inset-bottom));
-    transform: translateY(100%); transition: transform .26s cubic-bezier(.32,.72,0,1);
-  }
-  .quick-overlay.open .quick-sheet{ transform: translateY(0); }
-  .quick-opt{
-    display:flex; align-items:center; gap:14px; padding: 14px 6px; cursor:pointer; border-bottom:1px solid var(--line);
-  }
-  .quick-opt:last-child{ border-bottom:none; }
-  .quick-opt .ic{ width:38px; height:38px; border-radius:11px; background: var(--surface-soft); display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
-  .quick-opt .txt{ font-size:14.5px; font-weight:500; }
-  .quick-opt .sub{ font-size:12px; color: var(--ink-soft); margin-top:1px; }
-
-  /* ---------- Telas maiores (tablet / desktop) ---------- */
-  @media (min-width: 700px){
-    :root{ --app-max: 760px; }
-    body{ background: var(--surface-soft); align-items:flex-start; padding: 32px 0; }
-    .app{
-      min-height: calc(100vh - 64px);
-      border-radius: 28px;
-      box-shadow: 0 24px 60px rgba(28,31,38,.10), 0 2px 8px rgba(28,31,38,.05);
-      overflow: hidden;
-    }
-    header{ padding: 34px 32px 16px; }
-    main{ padding: 4px 32px 110px; }
-
-    /* listas de cartões viram grade quando há espaço */
-    .home-grid, ul.wtd, ul.projects{
-      display:grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap:12px;
-    }
-    .ai-hero{ grid-column: 1 / -1; }
-
-    /* diálogos centralizados em vez de colados na borda */
-    .sheet-overlay{ align-items:center; }
-    .sheet{ max-width:440px; border-radius:26px; box-shadow: var(--shadow-md); }
-
-    .quick-overlay{ align-items:center; }
-    .quick-sheet{ max-width:380px; border-radius:24px; box-shadow: var(--shadow-md); }
-
-    .detail-overlay{ align-items:center; }
-    .detail-sheet{
-      max-width:600px;
-      height:auto;
-      max-height:88vh;
-      border-radius:26px;
-      transform: translateY(18px) scale(.98);
-      opacity:0;
-      transition: opacity .2s ease, transform .2s ease;
-      box-shadow: 0 24px 60px rgba(28,31,38,.18);
-    }
-    .detail-overlay.open .detail-sheet{ transform: translateY(0) scale(1); opacity:1; }
-  }
-
-  @media (min-width: 1000px){
-    :root{ --app-max: 880px; }
-    .home-grid, ul.wtd, ul.projects{ grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+    font-family: var(--font-body);
+    min-height: 100vh;
+    overscroll-behavior-y: contain;
   }
 
   @media (prefers-reduced-motion: reduce){
-    *{ transition-duration: .01ms !important; animation-duration: .01ms !important; }
+    *{ animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+  }
+
+  a, button{ font-family: inherit; }
+  button{ cursor:pointer; -webkit-appearance:none; appearance:none; }
+  input, select, textarea{ -webkit-appearance:none; appearance:none; }
+  :focus-visible{ outline: 2.5px solid var(--ink); outline-offset: 2px; border-radius: 6px; }
+
+  .shell{
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100vh;
+    padding: calc(20px + var(--safe-top)) 16px calc(96px + var(--safe-bottom));
+    position: relative;
+  }
+
+  [hidden]{ display:none !important; }
+
+  /* ---------- Auth screen ---------- */
+  .auth-screen{
+    max-width: 400px;
+    margin: 0 auto;
+    min-height: 100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    padding: calc(28px + var(--safe-top)) 24px calc(28px + var(--safe-bottom));
+  }
+  .auth-brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-family: var(--font-display);
+    font-weight:700;
+    font-size: 16px;
+    margin-bottom: 34px;
+    justify-content:center;
+  }
+  .auth-brand .brand-mark{
+    width: 30px; height:30px; border-radius: 9px;
+    background: linear-gradient(150deg, var(--amber), var(--gold));
+    display:flex; align-items:center; justify-content:center;
+    font-size: 15px;
+  }
+  .auth-card{
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-1);
+    padding: 26px 22px;
+  }
+  .auth-card h1{
+    font-family: var(--font-display);
+    font-size: 21px;
+    margin: 0 0 6px;
+    letter-spacing:-0.01em;
+  }
+  .auth-card p.sub{
+    margin: 0 0 22px;
+    color: var(--ink-soft);
+    font-size: 13.5px;
+    line-height:1.5;
+  }
+  .auth-tabs{
+    display:flex;
+    background: var(--surface-soft);
+    border-radius: var(--radius-sm);
+    padding: 4px;
+    margin-bottom: 20px;
+  }
+  .auth-tab{
+    flex:1;
+    text-align:center;
+    padding: 9px 0;
+    border-radius: 7px;
+    border:none;
+    background: transparent;
+    font-size: 13.5px;
+    font-weight:600;
+    color: var(--ink-faint);
+    transition: all .15s;
+  }
+  .auth-tab[data-active="true"]{
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: 0 1px 3px rgba(27,42,74,0.12);
+  }
+  .auth-msg{
+    font-size: 13px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 14px;
+    display:none;
+  }
+  .auth-msg.show{ display:block; }
+  .auth-msg.error{ background: var(--clay-soft); color: var(--clay); }
+  .auth-msg.success{ background: var(--sage-soft); color: var(--sage); }
+  .auth-submit{
+    width:100%;
+    margin-top: 6px;
+    padding: 14px;
+    border-radius: var(--radius-md);
+    border:none;
+    background: var(--ink);
+    color: #fff;
+    font-size: 15px;
+    font-weight:700;
+    font-family: var(--font-display);
+    min-height: 48px;
+  }
+  .auth-submit:disabled{ opacity:.6; }
+  .auth-footnote{
+    text-align:center;
+    font-size: 12px;
+    color: var(--ink-faint);
+    margin-top: 18px;
+    line-height:1.6;
+  }
+  .config-warning{
+    max-width: 400px;
+    margin: 40px auto;
+    padding: 18px;
+    background: var(--clay-soft);
+    color: var(--clay);
+    border-radius: var(--radius-md);
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+  .config-warning code{
+    background: rgba(255,255,255,.5);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    margin-bottom: 22px;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    font-family: var(--font-display);
+    font-weight:700;
+    font-size: 14.5px;
+  }
+  .brand-mark{
+    width: 24px; height:24px; border-radius: 7px;
+    background: linear-gradient(150deg, var(--amber), var(--gold));
+    display:flex; align-items:center; justify-content:center;
+    font-size: 13px;
+  }
+  .user-menu{ position:relative; }
+  .user-btn{
+    width: 36px; height:36px;
+    border-radius:50%;
+    border:1px solid var(--line);
+    background: var(--surface);
+    font-size: 13px;
+    font-weight:700;
+    color: var(--ink-soft);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .user-dropdown{
+    position:absolute;
+    right:0; top: 44px;
+    background: var(--surface);
+    border:1px solid var(--line);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-1);
+    padding: 6px;
+    min-width: 190px;
+    z-index: 50;
+  }
+  .user-dropdown p{
+    font-size:12px; color: var(--ink-faint);
+    padding: 8px 10px 4px;
+    margin:0;
+    word-break: break-all;
+  }
+  .user-dropdown button{
+    width:100%;
+    text-align:left;
+    padding: 10px 10px;
+    border-radius: var(--radius-sm);
+    border:none;
+    background:transparent;
+    font-size: 13.5px;
+    color: var(--clay);
+    font-weight:600;
+  }
+  .user-dropdown button:hover{ background: var(--clay-soft); }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    display:flex;
+    flex-direction: column;
+    align-items:center;
+    text-align:center;
+    gap: 14px;
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    padding: 24px 20px;
+    box-shadow: var(--shadow-1);
+    border: 1px solid var(--line);
+    margin-bottom: 20px;
+  }
+  .greeting-eyebrow{
+    font-size: 12.5px;
+    color: var(--ink-faint);
+    margin: 0;
+  }
+  .greeting h1{
+    font-family: var(--font-display);
+    font-size: 21px;
+    font-weight: 700;
+    margin: 2px 0 2px;
+    letter-spacing: -0.01em;
+    line-height:1.3;
+  }
+  .greeting p.sub{
+    margin:0;
+    color: var(--ink-soft);
+    font-size: 13.5px;
+  }
+  .stats-row{
+    display:flex;
+    gap: 22px;
+    margin-top: 6px;
+  }
+  .stat{ display:flex; flex-direction: column; gap: 2px; }
+  .stat b{ font-family: var(--font-display); font-size: 19px; font-weight: 700; }
+  .stat span{ font-size: 11.5px; color: var(--ink-faint); }
+
+  .arc-wrap{ position: relative; width: 128px; height: 128px; }
+  .arc-wrap svg{ width:100%; height:100%; transform: rotate(-90deg); }
+  .arc-track{ fill:none; stroke: var(--surface-soft); stroke-width: 10; }
+  .arc-fill{
+    fill:none; stroke: url(#arcGradient); stroke-width: 10; stroke-linecap: round;
+    transition: stroke-dashoffset 1.1s cubic-bezier(.34,1.2,.4,1);
+  }
+  .arc-label{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .arc-label b{ font-family: var(--font-display); font-size: 25px; font-weight: 800; line-height:1; }
+  .arc-label span{ font-size: 10.5px; color: var(--ink-faint); margin-top:4px; }
+
+  /* ---------- Focus strip ---------- */
+  .focus-strip{
+    display:flex; align-items:center; gap: 9px;
+    margin: 0 0 14px 3px;
+    color: var(--ink-soft);
+    font-size: 13.5px;
+  }
+  .focus-strip .count{ font-family: var(--font-display); font-weight: 700; color: var(--ink); }
+  .focus-dot{ width:7px; height:7px; border-radius:50%; background: var(--amber); flex-shrink:0; }
+
+  /* ---------- Sync status ---------- */
+  .sync-note{
+    display:flex; align-items:center; gap:6px;
+    font-size: 12px; color: var(--ink-faint);
+    margin: -8px 0 14px 3px;
+  }
+  .sync-dot{ width:6px; height:6px; border-radius:50%; background: var(--sage); }
+  .sync-dot.offline{ background: var(--clay); }
+
+  /* ---------- Timeline ---------- */
+  .timeline-card{
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-1);
+    padding: 6px 16px 14px;
+    margin-bottom: 18px;
+  }
+  .task-row{
+    position: relative;
+    display:grid;
+    grid-template-columns: 26px 50px 1fr;
+    gap: 10px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .task-row:last-child{ border-bottom:none; }
+  .task-dot-col{ display:flex; justify-content:center; padding-top:2px; }
+  .check-btn{
+    width: 28px; height:28px;
+    border-radius:50%;
+    border: 2px solid var(--line);
+    background: var(--surface);
+    display:flex; align-items:center; justify-content:center;
+    color: transparent;
+    font-size: 13px;
+    transition: all .15s;
+  }
+  .task-row.done .check-btn{ background: var(--sage); border-color: var(--sage); color: #fff; }
+  .task-row.priority-alta .check-btn{ border-color: var(--clay); }
+  .task-row.priority-media .check-btn{ border-color: var(--amber); }
+  .task-row.priority-baixa .check-btn{ border-color: var(--sage); }
+
+  .task-time{
+    font-family: var(--font-display);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    padding-top: 5px;
+    white-space: nowrap;
+  }
+  .task-main{ min-width:0; }
+  .task-name{ font-size: 14.5px; font-weight: 600; margin: 3px 0 5px; }
+  .task-row.done .task-name{ text-decoration: line-through; color: var(--ink-faint); }
+  .task-meta{ display:flex; gap: 6px; flex-wrap: wrap; align-items:center; margin-bottom: 8px; }
+  .badge{ font-size: 11px; font-weight:600; padding: 2.5px 8px; border-radius: 999px; white-space:nowrap; }
+  .badge-alta{ background: var(--clay-soft); color: var(--clay); }
+  .badge-media{ background: var(--amber-soft); color: #9A6A02; }
+  .badge-baixa{ background: var(--sage-soft); color: var(--sage); }
+  .badge-cat{ background: var(--surface-soft); color: var(--ink-soft); border:1px solid var(--line); }
+  .badge-icon{ font-size: 11px; color: var(--ink-faint); }
+
+  .task-actions{ display:flex; gap: 4px; }
+  .icon-btn{
+    width: 34px; height:34px;
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    background: var(--surface-soft);
+    color: var(--ink-soft);
+    display:flex; align-items:center; justify-content:center;
+    font-size: 14px;
+  }
+  .icon-btn:active{ background: var(--line); }
+
+  .empty-state{ text-align:center; padding: 40px 16px; color: var(--ink-faint); }
+  .empty-state .emoji{ font-size: 28px; display:block; margin-bottom:10px; }
+  .empty-state p{ margin:0; font-size: 13.5px; }
+
+  /* ---------- FAB ---------- */
+  .fab{
+    position: fixed;
+    right: 20px;
+    bottom: calc(22px + var(--safe-bottom));
+    width: 58px; height:58px;
+    border-radius: 50%;
+    border:none;
+    background: linear-gradient(150deg, var(--amber), var(--gold));
+    color:#fff;
+    font-size: 26px;
+    box-shadow: 0 8px 20px -6px rgba(240,162,2,0.55);
+    display:flex; align-items:center; justify-content:center;
+    z-index: 40;
+  }
+  .fab:active{ transform: scale(.94); }
+
+  /* ---------- Modal ---------- */
+  .modal-overlay{
+    position: fixed; inset:0;
+    background: rgba(27,42,74,0.35);
+    display:flex; align-items:flex-end; justify-content:center;
+    z-index: 100; opacity:0; pointer-events:none;
+    transition: opacity .2s;
+  }
+  .modal-overlay.open{ opacity:1; pointer-events:auto; }
+  .modal{
+    background: var(--surface);
+    width: 100%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y:auto;
+    border-radius: 22px 22px 0 0;
+    padding: 22px 20px calc(24px + var(--safe-bottom));
+    transform: translateY(24px);
+    transition: transform .25s cubic-bezier(.2,.8,.3,1);
+  }
+  .modal-overlay.open .modal{ transform: translateY(0); }
+  .modal-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom: 16px; }
+  .modal-head h2{ font-family: var(--font-display); font-size: 17px; margin:0; }
+  .modal-close{ width:32px; height:32px; border-radius:50%; border:none; background: var(--surface-soft); color: var(--ink-soft); font-size:16px; }
+  .field{ margin-bottom: 15px; }
+  .field label{ display:flex; align-items:center; gap:6px; font-size: 12.5px; font-weight:600; color: var(--ink-soft); margin-bottom: 6px; }
+  .field input, .field textarea, .field select{
+    width:100%; padding: 12px; border-radius: var(--radius-sm);
+    border: 1.5px solid var(--line); background: var(--surface-soft);
+    font-size: 16px; font-family: inherit; color: var(--ink);
+  }
+  .field textarea{ resize: vertical; min-height: 56px; }
+  .field input:focus, .field textarea:focus, .field select:focus{ border-color: var(--amber); background: var(--surface); }
+  .field-row{ display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .priority-picker{ display:flex; gap:7px; }
+  .priority-opt{
+    flex:1; padding: 10px 4px; border-radius: var(--radius-sm);
+    border: 1.5px solid var(--line); background: var(--surface-soft);
+    font-size: 12.5px; font-weight:600; text-align:center; color: var(--ink-soft);
+  }
+  .priority-opt[data-active="true"][data-p="alta"]{ border-color: var(--clay); background: var(--clay-soft); color: var(--clay); }
+  .priority-opt[data-active="true"][data-p="media"]{ border-color: var(--amber); background: var(--amber-soft); color: #9A6A02; }
+  .priority-opt[data-active="true"][data-p="baixa"]{ border-color: var(--sage); background: var(--sage-soft); color: var(--sage); }
+  .modal-submit{
+    width:100%; margin-top: 4px; padding: 14px; border-radius: var(--radius-md);
+    border:none; background: var(--ink); color: #fff; font-size: 14.5px; font-weight:700;
+    font-family: var(--font-display); min-height: 48px;
+  }
+  .modal-submit:disabled{ opacity:.6; }
+
+  .toast{
+    position: fixed; left: 50%; bottom: calc(90px + var(--safe-bottom));
+    transform: translateX(-50%) translateY(20px);
+    background: var(--ink); color: #fff;
+    padding: 11px 20px; border-radius: 999px;
+    font-size: 13.5px; font-weight: 500;
+    opacity: 0; pointer-events: none;
+    transition: opacity .2s, transform .2s;
+    z-index: 200;
+    max-width: 88%;
+    text-align:center;
+  }
+  .toast.show{ opacity:1; transform: translateX(-50%) translateY(0); }
+
+  @media (min-width: 480px){
+    body{ background: var(--canvas); }
+    .shell, .auth-screen{
+      box-shadow: 0 0 60px rgba(27,42,74,0.08);
+    }
   }
 </style>
 </head>
 <body>
-<div class="app" id="app">
-  <div class="loading" id="loading">carregando seu painel…</div>
+
+<!-- ================= AUTH SCREEN ================= -->
+<div class="auth-screen" id="authScreen" hidden>
+  <div class="auth-brand"><span class="brand-mark">☀️</span> Organizador do Dia</div>
+  <div class="auth-card">
+    <div class="auth-tabs">
+      <button class="auth-tab" id="tabLogin" data-active="true">Entrar</button>
+      <button class="auth-tab" id="tabSignup" data-active="false">Criar conta</button>
+    </div>
+    <h1 id="authTitle">Bem-vindo de volta</h1>
+    <p class="sub" id="authSub">Entre para ver e organizar as tarefas do seu dia.</p>
+    <div class="auth-msg" id="authMsg"></div>
+    <form id="authForm">
+      <div class="field">
+        <label>E-mail</label>
+        <input type="email" id="authEmail" required placeholder="voce@email.com" autocomplete="email">
+      </div>
+      <div class="field">
+        <label>Senha</label>
+        <input type="password" id="authPassword" required placeholder="••••••••" minlength="6" autocomplete="current-password">
+      </div>
+      <button type="submit" class="auth-submit" id="authSubmitBtn">Entrar</button>
+    </form>
+    <p class="auth-footnote">Seus dados ficam salvos com segurança na nuvem e sincronizam entre seus aparelhos.</p>
+  </div>
 </div>
+
+<!-- ================= CONFIG WARNING (sem credenciais Supabase) ================= -->
+<div class="config-warning" id="configWarning" hidden>
+  ⚠️ Este app ainda não está conectado ao Supabase. Preencha <code>SUPABASE_URL</code> e <code>SUPABASE_ANON_KEY</code> no início do arquivo (dentro da tag <code>&lt;script&gt;</code>) com as credenciais do seu projeto para habilitar login e sincronização em nuvem.
+</div>
+
+<!-- ================= APP ================= -->
+<div class="shell" id="appShell" hidden>
+  <div class="topbar">
+    <div class="brand"><span class="brand-mark">☀️</span> Organizador do Dia</div>
+    <div class="user-menu">
+      <button class="user-btn" id="userBtn">👤</button>
+      <div class="user-dropdown" id="userDropdown" hidden>
+        <p id="userEmailLabel"></p>
+        <button id="logoutBtn">Sair da conta</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="arc-wrap">
+      <svg viewBox="0 0 132 132">
+        <defs>
+          <linearGradient id="arcGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#F0A202"/>
+            <stop offset="100%" stop-color="#E8B923"/>
+          </linearGradient>
+        </defs>
+        <circle class="arc-track" cx="66" cy="66" r="56"></circle>
+        <circle class="arc-fill" id="arcFill" cx="66" cy="66" r="56"></circle>
+      </svg>
+      <div class="arc-label">
+        <b id="arcPercent">0%</b>
+        <span>concluído</span>
+      </div>
+    </div>
+    <div class="greeting">
+      <p class="greeting-eyebrow" id="todayChip">—</p>
+      <h1 id="greetingText">Bom dia. Vamos organizar seu dia.</h1>
+      <p class="sub">Um painel simples para o que realmente importa hoje.</p>
+    </div>
+    <div class="stats-row">
+      <div class="stat"><b id="statTotal">0</b><span>tarefas</span></div>
+      <div class="stat"><b id="statDone">0</b><span>concluídas</span></div>
+      <div class="stat"><b id="statPending">0</b><span>pendentes</span></div>
+    </div>
+  </div>
+
+  <div class="focus-strip">
+    <span class="focus-dot"></span>
+    <span>Foco do dia · <span class="count" id="focusCount">0</span> tarefas prioritárias</span>
+  </div>
+  <div class="sync-note">
+    <span class="sync-dot" id="syncDot"></span>
+    <span id="syncLabel">Sincronizado com a nuvem</span>
+  </div>
+
+  <div class="timeline-card">
+    <div class="timeline" id="timelineList"></div>
+  </div>
+</div>
+
+<button class="fab" id="openModalBtn" hidden aria-label="Nova tarefa">+</button>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="modalTitle">Nova tarefa</h2>
+      <button class="modal-close" id="closeModalBtn">✕</button>
+    </div>
+    <form id="taskForm">
+      <input type="hidden" id="taskId">
+      <div class="field">
+        <label>📝 Nome da tarefa</label>
+        <input type="text" id="fieldNome" required placeholder="Ex.: Criar landing page">
+      </div>
+      <div class="field">
+        <label>📄 Descrição</label>
+        <textarea id="fieldDescricao" placeholder="Detalhes opcionais…"></textarea>
+      </div>
+      <div class="field field-row">
+        <div>
+          <label>📅 Data</label>
+          <input type="date" id="fieldData" required>
+        </div>
+        <div>
+          <label>🕐 Horário</label>
+          <input type="time" id="fieldHorario" required>
+        </div>
+      </div>
+      <div class="field">
+        <label>🔴 Prioridade</label>
+        <div class="priority-picker" id="priorityPicker">
+          <div class="priority-opt" data-p="alta">🔴 Alta</div>
+          <div class="priority-opt" data-p="media">🟡 Média</div>
+          <div class="priority-opt" data-p="baixa">🟢 Baixa</div>
+        </div>
+      </div>
+      <div class="field field-row">
+        <div>
+          <label>🏷️ Categoria</label>
+          <select id="fieldCategoria">
+            <option value="Trabalho">Trabalho</option>
+            <option value="Estudo">Estudo</option>
+            <option value="Pessoal">Pessoal</option>
+            <option value="Saúde">Saúde</option>
+            <option value="Financeiro">Financeiro</option>
+            <option value="Outro">Outro</option>
+          </select>
+        </div>
+        <div>
+          <label>🔄 Recorrência</label>
+          <select id="fieldRecorrencia">
+            <option value="nenhuma">Não repete</option>
+            <option value="diaria">Diária</option>
+            <option value="semanal">Semanal</option>
+            <option value="mensal">Mensal</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>🔔 Lembrete</label>
+        <select id="fieldLembrete">
+          <option value="nenhum">Sem lembrete</option>
+          <option value="5min">5 minutos antes</option>
+          <option value="15min">15 minutos antes</option>
+          <option value="30min">30 minutos antes</option>
+          <option value="1h">1 hora antes</option>
+        </select>
+      </div>
+      <button type="submit" class="modal-submit" id="submitBtn">Salvar tarefa</button>
+    </form>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-/* ============================================================
-   1. CONFIGURAÇÃO
-   Pegue os dois valores em: Supabase → Project Settings → API
-   A anon key é pública por design; quem protege os dados é o RLS
-   do script SQL que acompanha este arquivo.
-   ============================================================ */
-const SUPABASE_URL = 'https://qpngjzcjykdcpjywskqq.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwbmdqemNqeWtkY3BqeXdza3FxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1MTg1NDUsImV4cCI6MjEwNDA5NDU0NX0.uN_PJ6-Mao5TiZsoZjGSPrUg1546EKRKfBhtH-KP39w';
+(function(){
+  // ============================================================
+  // CONFIGURAÇÃO DO SUPABASE — preencha com as credenciais do seu
+  // projeto (Project Settings → API, no painel do Supabase).
+  // Enquanto estiver vazio, o app roda em modo local (localStorage)
+  // apenas para você testar o layout, SEM login e SEM sincronização.
+  // ============================================================
+  const SUPABASE_URL = 'https://mvsdxyilycfnxwvsweea.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im12c2R4eWlseWNmbnh3dnN3ZWVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg4MDQ3NTgsImV4cCI6MjEwNDM4MDc1OH0.iGWhddk1kOqD2y_yg2YRb8c-6nTwsFK19PXNBnWcwGI';
 
-const CONFIGURED = !SUPABASE_URL.includes('SEU-PROJETO') && !SUPABASE_ANON_KEY.includes('SUA-ANON');
-const sb = CONFIGURED ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+  // SQL para criar a tabela e as políticas de segurança (RLS) —
+  // rode isso uma vez no SQL Editor do seu projeto Supabase:
+  //
+  // create table organizador_tarefas (
+  //   id uuid primary key default gen_random_uuid(),
+  //   user_id uuid references auth.users not null default auth.uid(),
+  //   nome text not null,
+  //   descricao text,
+  //   data date not null,
+  //   horario time not null,
+  //   prioridade text not null,
+  //   categoria text,
+  //   recorrencia text,
+  //   lembrete text,
+  //   done boolean default false,
+  //   created_at timestamptz default now()
+  // );
+  //
+  // alter table organizador_tarefas enable row level security;
+  //
+  // create policy "usuarios veem só suas tarefas"
+  //   on organizador_tarefas for select using (auth.uid() = user_id);
+  // create policy "usuarios inserem suas tarefas"
+  //   on organizador_tarefas for insert with check (auth.uid() = user_id);
+  // create policy "usuarios atualizam suas tarefas"
+  //   on organizador_tarefas for update using (auth.uid() = user_id);
+  // create policy "usuarios excluem suas tarefas"
+  //   on organizador_tarefas for delete using (auth.uid() = user_id);
 
-/* ============================================================
-   2. HELPERS DE DATA
-   ============================================================ */
-const DIAS = ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
-const DIAS_ABR = ['dom','seg','ter','qua','qui','sex','sáb'];
-const MESES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+  const configured = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
+  const supabase = configured ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+  const LOCAL_KEY = 'organizadorDoDia_tasks_local_v1';
 
-function todayKey(d = new Date()){
-  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-}
-function lastNDays(n){
-  const out = [];
-  const d = new Date();
-  for(let i = n-1; i >= 0; i--){
-    const dd = new Date(d);
-    dd.setDate(d.getDate() - i);
-    out.push(todayKey(dd));
-  }
-  return out;
-}
-function nextNDays(n){
-  const out = [];
-  const d = new Date();
-  for(let i = 0; i < n; i++){
-    const dd = new Date(d);
-    dd.setDate(d.getDate() + i);
-    out.push(todayKey(dd));
-  }
-  return out;
-}
-function parseKey(key){
-  const [y,m,d] = key.split('-').map(Number);
-  return new Date(y, m-1, d);
-}
-function dayGroupLabel(key){
-  const today = todayKey();
-  const tmr = todayKey(new Date(Date.now() + 86400000));
-  if(key === today) return 'hoje';
-  if(key === tmr) return 'amanhã';
-  const date = parseKey(key);
-  return `${DIAS_ABR[date.getDay()]}, ${date.getDate()} de ${MESES[date.getMonth()]}`;
-}
-function escapeHtml(s){
-  const d = document.createElement('div');
-  d.textContent = s;
-  return d.innerHTML;
-}
-function uid(p){ return p + Date.now() + Math.random().toString(36).slice(2,6); }
+  const $ = (sel) => document.querySelector(sel);
+  const todayISO = () => {
+    const d = new Date();
+    const off = d.getTimezoneOffset();
+    return new Date(d.getTime() - off*60000).toISOString().slice(0,10);
+  };
+  const uid = () => 't_' + Math.random().toString(36).slice(2,10) + Date.now().toString(36);
 
-let toastTimer;
-function toast(msg){
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), 3200);
-}
+  let currentUser = null;
+  let tasks = [];
+  let editingId = null;
+  let authMode = 'login';
 
-/* ============================================================
-   3. ESTADO
-   ============================================================ */
-let session = null;          // sessão do Supabase (null = deslogado)
-let screen  = 'auth';        // 'auth' | 'app'
-let authMode = 'login';      // 'login' | 'signup'
-let authMsg = null;          // { type:'err'|'ok', text }
-let authBusy = false;
+  const els = {
+    authScreen: $('#authScreen'),
+    configWarning: $('#configWarning'),
+    appShell: $('#appShell'),
+    fab: $('#openModalBtn'),
+    authTitle: $('#authTitle'),
+    authSub: $('#authSub'),
+    authMsg: $('#authMsg'),
+    authForm: $('#authForm'),
+    authSubmitBtn: $('#authSubmitBtn'),
+    tabLogin: $('#tabLogin'),
+    tabSignup: $('#tabSignup'),
+    userBtn: $('#userBtn'),
+    userDropdown: $('#userDropdown'),
+    userEmailLabel: $('#userEmailLabel'),
+    logoutBtn: $('#logoutBtn'),
+    todayChip: $('#todayChip'),
+    greetingText: $('#greetingText'),
+    arcFill: $('#arcFill'),
+    arcPercent: $('#arcPercent'),
+    statTotal: $('#statTotal'),
+    statDone: $('#statDone'),
+    statPending: $('#statPending'),
+    focusCount: $('#focusCount'),
+    syncDot: $('#syncDot'),
+    syncLabel: $('#syncLabel'),
+    timelineList: $('#timelineList'),
+    modalOverlay: $('#modalOverlay'),
+    modalTitle: $('#modalTitle'),
+    submitBtn: $('#submitBtn'),
+    taskForm: $('#taskForm'),
+    priorityPicker: $('#priorityPicker'),
+    toast: $('#toast'),
+  };
 
-let view = 'home';            // 'home' | 'rotina' | 'agenda' | 'wtd' | 'projects' | 'week'
-let sheetOpen = false;
-let sheetKind = null;         // 'task' | 'event' | 'wtd' | 'project'
-let selectedDate = todayKey();
-let selectedTime = '';
+  const CIRC = 2 * Math.PI * 56;
 
-let tasks = [];              // [{id, name}]
-let log = {};                // { '2026-09-03': { taskId: true } }
-let events = [];             // [{id, date, time, title}]
-
-// ---- Novas entidades (painel pessoal) ----
-let wantToDo = [];           // [{id,title,description,category,status,created_at}]
-let projects = [];           // [{id,name,objective,description,category,status,created_at,deadline,cost_estimated,cost_actual,notes}]
-let projectSteps = {};       // { projectId: [{id,name,done,position}] }
-let weeklyPlans = {};        // { 'YYYY-W##': {priorities:[3], financial_goal, personal_goal, learn_goal, do_goal, self_goal} }
-
-let quickOpen = false;                 // menu rápido do FAB (+)
-let detailOpen = false;                // modal de detalhe
-let detailKind = null;                 // 'project' | 'wtd'
-let detailId = null;
-let newStepDraft = '';
-let aiState = { loading:false, kind:null, forId:null, suggestion:null }; // suggestion: texto ou objeto conforme o caso
-
-const WTD_CATEGORIES = ['pessoal','aprendizado','viagem','saúde','financeiro','lazer','outro'];
-const WTD_STATUS = [
-  { v:'quero', label:'quero fazer' },
-  { v:'consid', label:'em consideração' },
-  { v:'projeto', label:'virou projeto' },
-  { v:'concluido', label:'concluído' },
-  { v:'descartado', label:'descartado' },
-];
-const PROJECT_CATEGORIES = ['renda extra','casa','carreira','saúde','aprendizado','viagem','financeiro','outro'];
-const PROJECT_STATUS = [
-  { v:'ativo', label:'ativo' },
-  { v:'pausado', label:'pausado' },
-  { v:'concluido', label:'concluído' },
-];
-
-function weekKey(d = new Date()){
-  const dt = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-  const dayNum = (dt.getUTCDay() + 6) % 7;
-  dt.setUTCDate(dt.getUTCDate() - dayNum + 3);
-  const firstThursday = new Date(Date.UTC(dt.getUTCFullYear(),0,4));
-  const week = 1 + Math.round(((dt - firstThursday) / 86400000 - 3 + (firstThursday.getUTCDay()+6)%7) / 7);
-  return `${dt.getUTCFullYear()}-W${String(week).padStart(2,'0')}`;
-}
-function emptyWeek(){ return { priorities:['','',''], financial_goal:'', personal_goal:'', learn_goal:'', do_goal:'', self_goal:'' }; }
-function currentWeek(){ const k = weekKey(); if(!weeklyPlans[k]) weeklyPlans[k] = emptyWeek(); return weeklyPlans[k]; }
-
-/* ============================================================
-   4. BACKEND
-   Duas implementações com a mesma interface:
-   - supabaseBackend: usado quando há login (dados na nuvem)
-   - localBackend:    fallback offline no próprio navegador
-   ============================================================ */
-const localBackend = {
-  cloud: false,
-  read(k, fb){ try{ return JSON.parse(localStorage.getItem(k)) ?? fb; }catch(e){ return fb; } },
-  write(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} },
-  async load(){
-    tasks  = this.read('rotina.tasks', []);
-    log    = this.read('rotina.log', {});
-    events = this.read('rotina.events', []);
-    wantToDo = this.read('rotina.wtd', []);
-    projects = this.read('rotina.projects', []);
-    projectSteps = this.read('rotina.steps', {});
-    weeklyPlans = this.read('rotina.weeks', {});
-  },
-  async addTask(name){
-    const t = { id: uid('t'), name };
-    tasks.push(t);
-    this.write('rotina.tasks', tasks);
-    return t;
-  },
-  async removeTask(id){
-    tasks = tasks.filter(t => t.id !== id);
-    Object.keys(log).forEach(k => { delete log[k][id]; });
-    this.write('rotina.tasks', tasks);
-    this.write('rotina.log', log);
-  },
-  async setDone(){ this.write('rotina.log', log); },
-  async addEvent(ev){
-    const e = { id: uid('e'), ...ev };
-    events.push(e);
-    this.write('rotina.events', events);
-    return e;
-  },
-  async removeEvent(id){
-    events = events.filter(e => e.id !== id);
-    this.write('rotina.events', events);
-  },
-
-  // ---- Quero Fazer ----
-  async addWtd(item){
-    const it = { id: uid('w'), description:'', category:'pessoal', status:'quero', created_at:new Date().toISOString(), ...item };
-    wantToDo.unshift(it);
-    this.write('rotina.wtd', wantToDo);
-    return it;
-  },
-  async updateWtd(id, patch){
-    wantToDo = wantToDo.map(w => w.id === id ? { ...w, ...patch } : w);
-    this.write('rotina.wtd', wantToDo);
-  },
-  async removeWtd(id){
-    wantToDo = wantToDo.filter(w => w.id !== id);
-    this.write('rotina.wtd', wantToDo);
-  },
-
-  // ---- Projetos ----
-  async addProject(p){
-    const proj = { id: uid('p'), objective:'', description:'', category:'outro', status:'ativo',
-      created_at:new Date().toISOString(), deadline:'', cost_estimated:null, cost_actual:null, notes:'', ...p };
-    projects.unshift(proj);
-    projectSteps[proj.id] = [];
-    this.write('rotina.projects', projects);
-    this.write('rotina.steps', projectSteps);
-    return proj;
-  },
-  async updateProject(id, patch){
-    projects = projects.map(p => p.id === id ? { ...p, ...patch } : p);
-    this.write('rotina.projects', projects);
-  },
-  async removeProject(id){
-    projects = projects.filter(p => p.id !== id);
-    delete projectSteps[id];
-    this.write('rotina.projects', projects);
-    this.write('rotina.steps', projectSteps);
-  },
-  async addStep(projectId, name){
-    const st = { id: uid('s'), name, done:false, position:(projectSteps[projectId]||[]).length };
-    if(!projectSteps[projectId]) projectSteps[projectId] = [];
-    projectSteps[projectId].push(st);
-    this.write('rotina.steps', projectSteps);
-    return st;
-  },
-  async toggleStep(projectId, stepId, done){
-    const list = projectSteps[projectId] || [];
-    const s = list.find(s => s.id === stepId);
-    if(s) s.done = done;
-    this.write('rotina.steps', projectSteps);
-  },
-  async removeStep(projectId, stepId){
-    projectSteps[projectId] = (projectSteps[projectId]||[]).filter(s => s.id !== stepId);
-    this.write('rotina.steps', projectSteps);
-  },
-
-  // ---- Semana ----
-  async saveWeek(key, data){
-    weeklyPlans[key] = data;
-    this.write('rotina.weeks', weeklyPlans);
-  }
-};
-
-const supabaseBackend = {
-  cloud: true,
-  async load(){
-    const [tRes, lRes, eRes, wRes, pRes, sRes, wkRes] = await Promise.all([
-      sb.from('tasks').select('id,name,position,created_at').order('position').order('created_at'),
-      sb.from('task_logs').select('task_id,day').gte('day', lastNDays(60)[0]),
-      sb.from('events').select('id,title,event_date,event_time').order('event_date').order('event_time'),
-      sb.from('want_to_do').select('*').order('created_at', { ascending:false }),
-      sb.from('projects').select('*').order('created_at', { ascending:false }),
-      sb.from('project_steps').select('*').order('position'),
-      sb.from('weekly_plans').select('*')
-    ]);
-    if(tRes.error || lRes.error || eRes.error){
-      throw (tRes.error || lRes.error || eRes.error);
+  // ---------- Data layer (Supabase ou local) ----------
+  async function fetchTasks(){
+    if(!configured){
+      try{ return JSON.parse(localStorage.getItem(LOCAL_KEY)) || seedLocalTasks(); }
+      catch(e){ return seedLocalTasks(); }
     }
-    tasks = tRes.data.map(r => ({ id: r.id, name: r.name }));
-    log = {};
-    lRes.data.forEach(r => {
-      if(!log[r.day]) log[r.day] = {};
-      log[r.day][r.task_id] = true;
-    });
-    events = eRes.data.map(r => ({
-      id: r.id,
-      title: r.title,
-      date: r.event_date,
-      time: r.event_time ? String(r.event_time).slice(0,5) : ''
-    }));
-
-    // Tabelas novas: se ainda não existirem no banco, seguimos com listas vazias
-    // em vez de quebrar o app (assim dá pra rodar o SQL depois, com calma).
-    wantToDo = wRes.error ? [] : wRes.data;
-    projects = pRes.error ? [] : pRes.data;
-    projectSteps = {};
-    if(!sRes.error){
-      sRes.data.forEach(s => {
-        if(!projectSteps[s.project_id]) projectSteps[s.project_id] = [];
-        projectSteps[s.project_id].push({ id: s.id, name: s.name, done: s.done, position: s.position });
-      });
-    }
-    weeklyPlans = {};
-    if(!wkRes.error){
-      wkRes.data.forEach(w => {
-        weeklyPlans[w.week_key] = {
-          priorities: w.priorities || ['','',''],
-          financial_goal: w.financial_goal || '',
-          personal_goal: w.personal_goal || '',
-          learn_goal: w.learn_goal || '',
-          do_goal: w.do_goal || '',
-          self_goal: w.self_goal || ''
-        };
-      });
-    }
-    if(wRes.error) console.warn('want_to_do: rode o SQL novo no Supabase.', wRes.error.message);
-    if(pRes.error) console.warn('projects: rode o SQL novo no Supabase.', pRes.error.message);
-  },
-  async addTask(name){
-    const { data, error } = await sb.from('tasks')
-      .insert({ name, position: tasks.length })
-      .select('id,name').single();
-    if(error) throw error;
-    const t = { id: data.id, name: data.name };
-    tasks.push(t);
-    return t;
-  },
-  async removeTask(id){
-    const before = tasks;
-    tasks = tasks.filter(t => t.id !== id);
-    const { error } = await sb.from('tasks').delete().eq('id', id);
-    if(error){ tasks = before; throw error; }
-    Object.keys(log).forEach(k => { delete log[k][id]; });
-  },
-  async setDone(taskId, day, done){
-    if(done){
-      const { error } = await sb.from('task_logs')
-        .upsert({ task_id: taskId, day }, { onConflict: 'task_id,day' });
-      if(error) throw error;
-    } else {
-      const { error } = await sb.from('task_logs')
-        .delete().eq('task_id', taskId).eq('day', day);
-      if(error) throw error;
-    }
-  },
-  async addEvent(ev){
-    const { data, error } = await sb.from('events')
-      .insert({ title: ev.title, event_date: ev.date, event_time: ev.time || null })
-      .select('id,title,event_date,event_time').single();
-    if(error) throw error;
-    const e = {
-      id: data.id, title: data.title, date: data.event_date,
-      time: data.event_time ? String(data.event_time).slice(0,5) : ''
-    };
-    events.push(e);
-    return e;
-  },
-  async removeEvent(id){
-    const before = events;
-    events = events.filter(e => e.id !== id);
-    const { error } = await sb.from('events').delete().eq('id', id);
-    if(error){ events = before; throw error; }
-  },
-
-  // ---- Quero Fazer ----
-  async addWtd(item){
-    const row = { title:item.title, description:item.description||'', category:item.category||'pessoal', status:item.status||'quero' };
-    const { data, error } = await sb.from('want_to_do').insert(row).select('*').single();
-    if(error) throw error;
-    wantToDo.unshift(data);
-    return data;
-  },
-  async updateWtd(id, patch){
-    const before = wantToDo;
-    wantToDo = wantToDo.map(w => w.id === id ? { ...w, ...patch } : w);
-    const { error } = await sb.from('want_to_do').update(patch).eq('id', id);
-    if(error){ wantToDo = before; throw error; }
-  },
-  async removeWtd(id){
-    const before = wantToDo;
-    wantToDo = wantToDo.filter(w => w.id !== id);
-    const { error } = await sb.from('want_to_do').delete().eq('id', id);
-    if(error){ wantToDo = before; throw error; }
-  },
-
-  // ---- Projetos ----
-  async addProject(p){
-    const row = {
-      name:p.name, objective:p.objective||'', description:p.description||'', category:p.category||'outro',
-      status:p.status||'ativo', deadline:p.deadline||null, cost_estimated:p.cost_estimated||null,
-      cost_actual:p.cost_actual||null, notes:p.notes||''
-    };
-    const { data, error } = await sb.from('projects').insert(row).select('*').single();
-    if(error) throw error;
-    projects.unshift(data);
-    projectSteps[data.id] = [];
-    return data;
-  },
-  async updateProject(id, patch){
-    const before = projects;
-    projects = projects.map(p => p.id === id ? { ...p, ...patch } : p);
-    const { error } = await sb.from('projects').update(patch).eq('id', id);
-    if(error){ projects = before; throw error; }
-  },
-  async removeProject(id){
-    const before = projects;
-    projects = projects.filter(p => p.id !== id);
-    delete projectSteps[id];
-    const { error } = await sb.from('projects').delete().eq('id', id);
-    if(error){ projects = before; throw error; }
-  },
-  async addStep(projectId, name){
-    const position = (projectSteps[projectId]||[]).length;
-    const { data, error } = await sb.from('project_steps')
-      .insert({ project_id: projectId, name, done:false, position }).select('*').single();
-    if(error) throw error;
-    if(!projectSteps[projectId]) projectSteps[projectId] = [];
-    const st = { id:data.id, name:data.name, done:data.done, position:data.position };
-    projectSteps[projectId].push(st);
-    return st;
-  },
-  async toggleStep(projectId, stepId, done){
-    const list = projectSteps[projectId] || [];
-    const s = list.find(s => s.id === stepId);
-    if(s) s.done = done;
-    const { error } = await sb.from('project_steps').update({ done }).eq('id', stepId);
-    if(error) throw error;
-  },
-  async removeStep(projectId, stepId){
-    projectSteps[projectId] = (projectSteps[projectId]||[]).filter(s => s.id !== stepId);
-    const { error } = await sb.from('project_steps').delete().eq('id', stepId);
-    if(error) throw error;
-  },
-
-  // ---- Semana ----
-  async saveWeek(key, data){
-    weeklyPlans[key] = data;
-    const { error } = await sb.from('weekly_plans').upsert({
-      week_key:key, priorities:data.priorities, financial_goal:data.financial_goal,
-      personal_goal:data.personal_goal, learn_goal:data.learn_goal, do_goal:data.do_goal, self_goal:data.self_goal
-    }, { onConflict:'user_id,week_key' });
-    if(error) throw error;
+    const { data, error } = await supabase
+      .from('organizador_tarefas')
+      .select('*')
+      .order('data', { ascending:true })
+      .order('horario', { ascending:true });
+    if(error){ showToast('Erro ao carregar tarefas.'); setSync(false); return []; }
+    setSync(true);
+    return data.map(mapFromDb);
   }
-};
-
-let backend = CONFIGURED ? supabaseBackend : localBackend;
-
-/* ============================================================
-   5. LÓGICA DA ROTINA
-   ============================================================ */
-function isDone(id, key = todayKey()){
-  return !!(log[key] && log[key][id]);
-}
-async function toggleDone(id){
-  const key = todayKey();
-  const next = !isDone(id, key);
-  if(!log[key]) log[key] = {};
-  if(next) log[key][id] = true; else delete log[key][id];
-  render();
-  try{
-    await backend.setDone(id, key, next);
-  }catch(e){
-    if(next) delete log[key][id]; else log[key][id] = true;
-    render();
-    toast('não deu para salvar. verifique a conexão.');
-  }
-}
-function streakDots(id){
-  return lastNDays(5).map(k => isDone(id, k) ? 'hit' : '');
-}
-
-/* ============================================================
-   6. AUTENTICAÇÃO
-   ============================================================ */
-async function signIn(email, password){
-  const { data, error } = await sb.auth.signInWithPassword({ email, password });
-  if(error) throw error;
-  return data.session;
-}
-async function signUp(email, password){
-  const { data, error } = await sb.auth.signUp({ email, password });
-  if(error) throw error;
-  return data.session; // null quando a confirmação por e-mail está ligada
-}
-async function signOut(){
-  await sb.auth.signOut();
-  session = null;
-  tasks = []; log = {}; events = []; wantToDo = []; projects = []; projectSteps = {}; weeklyPlans = {};
-  screen = 'auth';
-  authMode = 'login';
-  authMsg = null;
-  render();
-}
-function authErrorText(err){
-  const m = (err && err.message || '').toLowerCase();
-  if(m.includes('invalid login')) return 'e-mail ou senha não conferem.';
-  if(m.includes('already registered')) return 'esse e-mail já tem conta. entre com sua senha.';
-  if(m.includes('password') && m.includes('6')) return 'a senha precisa de pelo menos 6 caracteres.';
-  if(m.includes('email') && m.includes('invalid')) return 'esse e-mail não parece válido.';
-  if(m.includes('rate limit')) return 'muitas tentativas. espere um minuto.';
-  return err && err.message ? err.message : 'algo deu errado. tente de novo.';
-}
-
-/* ============================================================
-   7. IA — assistente de planejamento pessoal
-   ------------------------------------------------------------
-   A IA NUNCA decide nada sozinha: ela só sugere, e o usuário
-   aceita, edita ou ignora. Nada é salvo sem confirmação.
-
-   SEGURANÇA: nenhuma chave de API de IA fica aqui no navegador.
-   AI_ENDPOINT deve apontar para uma função server-side sua
-   (ex: Supabase Edge Function, Vercel Function, Cloudflare Worker)
-   que guarda a chave real e repassa a chamada para o provedor de IA.
-
-   Contrato esperado do endpoint:
-     POST { kind: 'project_plan' | 'week_plan' | 'priority', payload }
-     → 200 { result: {...} }  (o formato de "result" varia por kind,
-       ver os três blocos abaixo)
-
-   Enquanto AI_ENDPOINT não estiver configurado, o app usa um
-   gerador local simples (heurística, não é IA de verdade) só
-   para a experiência não ficar quebrada em desenvolvimento.
-   ============================================================ */
-const AI_ENDPOINT = ''; // DEVELOPMENT ONLY: deixe vazio para usar o gerador local. Ex: 'https://SEU-PROJETO.functions.supabase.co/ai-assistant'
-
-async function callAI(kind, payload){
-  if(AI_ENDPOINT){
-    const res = await fetch(AI_ENDPOINT, {
-      method:'POST',
-      headers: { 'Content-Type':'application/json' },
-      body: JSON.stringify({ kind, payload })
-    });
-    if(!res.ok) throw new Error('IA indisponível no momento.');
-    const data = await res.json();
-    return data.result;
-  }
-  await new Promise(r => setTimeout(r, 550)); // simula latência
-  return localAiFallback(kind, payload);
-}
-
-function localAiFallback(kind, payload){
-  if(kind === 'project_plan'){
-    const name = (payload.name || '').trim();
+  function mapFromDb(row){
     return {
-      objective: `Avançar de forma consistente em "${name}" até ter um resultado concreto e visível.`,
-      steps: [
-        'Definir claramente o que significa "concluído" aqui',
-        'Levantar o que já tenho disponível para começar',
-        'Quebrar em 3 a 5 blocos de trabalho pequenos',
-        'Reservar um horário fixo na semana para avançar',
-        'Fazer a primeira etapa, mesmo que pequena',
-        'Revisar o progresso e ajustar o plano'
-      ]
+      id: row.id, nome: row.nome, descricao: row.descricao || '',
+      data: row.data, horario: row.horario ? row.horario.slice(0,5) : '',
+      prioridade: row.prioridade, categoria: row.categoria,
+      recorrencia: row.recorrencia, lembrete: row.lembrete, done: row.done,
     };
   }
-  if(kind === 'week_plan'){
-    const activeProjects = projects.filter(p => p.status === 'ativo').slice(0,2);
-    const pending = activeProjects.map(p => `Avançar 1 etapa de "${p.name}"`);
-    while(pending.length < 3){
-      const idea = wantToDo.find(w => w.status === 'quero');
-      pending.push(idea ? `Explorar "${idea.title}"` : 'Cuidar de algo pendente da rotina');
+  function seedLocalTasks(){
+    const today = todayISO();
+    const seed = [
+      {id: uid(), nome:'Criar landing page', descricao:'', data: today, horario:'09:00', prioridade:'alta', categoria:'Trabalho', recorrencia:'nenhuma', lembrete:'nenhum', done:false},
+      {id: uid(), nome:'Prospectar clientes', descricao:'', data: today, horario:'11:00', prioridade:'media', categoria:'Trabalho', recorrencia:'nenhuma', lembrete:'nenhum', done:false},
+      {id: uid(), nome:'Estudar programação', descricao:'', data: today, horario:'14:00', prioridade:'baixa', categoria:'Estudo', recorrencia:'nenhuma', lembrete:'nenhum', done:true},
+    ];
+    localStorage.setItem(LOCAL_KEY, JSON.stringify(seed));
+    return seed;
+  }
+  function saveLocal(){ localStorage.setItem(LOCAL_KEY, JSON.stringify(tasks)); }
+
+  async function createTask(payload){
+    if(!configured){
+      tasks.push({ id: uid(), done:false, ...payload });
+      saveLocal();
+      return;
     }
-    return {
-      priorities: pending.slice(0,3),
-      financial_goal: '',
-      personal_goal: 'Cuidar do corpo pelo menos 3x',
-      learn_goal: '',
-      do_goal: '',
-      self_goal: 'Ter uma pausa de verdade em algum momento'
-    };
+    const { data, error } = await supabase
+      .from('organizador_tarefas')
+      .insert([{ ...payload, user_id: currentUser.id, done:false }])
+      .select();
+    if(error){ showToast('Erro ao salvar tarefa.'); setSync(false); return; }
+    tasks.push(mapFromDb(data[0]));
+    setSync(true);
   }
-  if(kind === 'priority'){
-    const active = projects.filter(p => p.status === 'ativo');
-    if(active.length === 0){
-      return `Você ainda não tem projetos ativos. Que tal escolher 1 item de "Quero Fazer" e transformá-lo em projeto? É mais fácil priorizar quando existe algo concreto em andamento.`;
+  async function updateTask(id, payload){
+    if(!configured){
+      tasks = tasks.map(t => t.id === id ? {...t, ...payload} : t);
+      saveLocal();
+      return;
     }
-    const withProgress = active.map(p => {
-      const steps = projectSteps[p.id] || [];
-      const done = steps.filter(s => s.done).length;
-      const pct = steps.length ? Math.round((done/steps.length)*100) : 0;
-      return { p, pct, steps: steps.length };
-    }).sort((a,b) => b.pct - a.pct);
-
-    let text = `Você está tentando avançar em ${active.length} projeto${active.length>1?'s':''} ao mesmo tempo.\n\nMinha sugestão:\n\n`;
-    withProgress.forEach((item, i) => {
-      const reason = item.pct >= 50 ? 'já está mais avançado, vale terminar primeiro'
-        : item.steps === 0 ? 'ainda não tem etapas definidas — comece por aí'
-        : 'está no meio do caminho, dá pra avançar em blocos pequenos';
-      text += `${i+1}. ${item.p.name}\n   ${reason}.\n\n`;
-    });
-    text += `Para esta semana, eu focaria no primeiro da lista e trataria os demais como "se sobrar tempo".`;
-    return text;
+    const { error } = await supabase.from('organizador_tarefas').update(payload).eq('id', id);
+    if(error){ showToast('Erro ao atualizar tarefa.'); setSync(false); return; }
+    tasks = tasks.map(t => t.id === id ? {...t, ...payload} : t);
+    setSync(true);
   }
-  return '';
-}
-
-async function runProjectAI(projectId){
-  const p = projects.find(p => p.id === projectId);
-  if(!p) return;
-  aiState = { loading:true, kind:'project_plan', forId:projectId, suggestion:null };
-  render();
-  try{
-    const result = await callAI('project_plan', { name:p.name, objective:p.objective, category:p.category, description:p.description });
-    aiState = { loading:false, kind:'project_plan', forId:projectId, suggestion:result };
-  }catch(e){
-    aiState = { loading:false, kind:null, forId:null, suggestion:null };
-    toast('a IA não respondeu. tente de novo em instantes.');
-  }
-  render();
-}
-async function acceptProjectAI(){
-  if(!aiState.suggestion || aiState.kind !== 'project_plan') return;
-  const projectId = aiState.forId;
-  const sug = aiState.suggestion;
-  try{
-    if(sug.objective){
-      await backend.updateProject(projectId, { objective: sug.objective });
+  async function deleteTaskById(id){
+    if(!configured){
+      tasks = tasks.filter(t => t.id !== id);
+      saveLocal();
+      return;
     }
-    for(const stepName of (sug.steps || [])){
-      await backend.addStep(projectId, stepName);
-    }
-  }catch(e){ toast('não deu para aplicar tudo. tente de novo.'); }
-  aiState = { loading:false, kind:null, forId:null, suggestion:null };
-  render();
-}
-
-async function runWeekAI(){
-  aiState = { loading:true, kind:'week_plan', forId:null, suggestion:null };
-  render();
-  try{
-    const result = await callAI('week_plan', {
-      projects: projects.filter(p=>p.status==='ativo').map(p=>({ name:p.name, steps:(projectSteps[p.id]||[]).filter(s=>!s.done).length })),
-      wantToDo: wantToDo.filter(w=>w.status==='quero').map(w=>w.title)
-    });
-    aiState = { loading:false, kind:'week_plan', forId:null, suggestion:result };
-  }catch(e){
-    aiState = { loading:false, kind:null, forId:null, suggestion:null };
-    toast('a IA não respondeu. tente de novo em instantes.');
+    const { error } = await supabase.from('organizador_tarefas').delete().eq('id', id);
+    if(error){ showToast('Erro ao excluir tarefa.'); setSync(false); return; }
+    tasks = tasks.filter(t => t.id !== id);
+    setSync(true);
   }
-  render();
-}
-async function acceptWeekAI(){
-  if(!aiState.suggestion || aiState.kind !== 'week_plan') return;
-  const sug = aiState.suggestion;
-  const key = weekKey();
-  const merged = { ...emptyWeek(), ...currentWeek(), ...sug, priorities: sug.priorities || currentWeek().priorities };
-  try{ await backend.saveWeek(key, merged); }catch(e){ toast('não deu para salvar a semana.'); }
-  aiState = { loading:false, kind:null, forId:null, suggestion:null };
-  render();
-}
-
-async function runPriorityAI(){
-  aiState = { loading:true, kind:'priority', forId:null, suggestion:null };
-  render();
-  try{
-    const result = await callAI('priority', {
-      projects: projects.map(p => ({ name:p.name, status:p.status, steps:(projectSteps[p.id]||[]).length, done:(projectSteps[p.id]||[]).filter(s=>s.done).length })),
-      wantToDoCount: wantToDo.filter(w=>w.status==='quero').length
-    });
-    aiState = { loading:false, kind:'priority', forId:null, suggestion:result };
-  }catch(e){
-    aiState = { loading:false, kind:null, forId:null, suggestion:null };
-    toast('a IA não respondeu. tente de novo em instantes.');
-  }
-  render();
-}
-function dismissAI(){ aiState = { loading:false, kind:null, forId:null, suggestion:null }; render(); }
-
-/* ============================================================
-   8. RENDER
-   ============================================================ */
-const emptyGlyph = `<svg class="glyph" viewBox="0 0 40 40" fill="none"><rect x="7" y="9" width="26" height="24" rx="5" stroke="currentColor" stroke-width="1.6"/><path d="M7 16h26" stroke="currentColor" stroke-width="1.6"/><path d="M14 5v6M26 5v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
-
-function renderAuth(){
-  const isSignup = authMode === 'signup';
-  return `
-    <div class="auth">
-      <div class="auth-mark">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-          <path d="M4 12.5L9.5 18L20 6.5" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
-      <h1>${isSignup ? 'crie sua rotina' : 'bom te ver de novo'}</h1>
-      <p class="sub">${isSignup
-        ? 'sua conta guarda as tarefas, o histórico de dias e a agenda em qualquer aparelho.'
-        : 'entre para ver suas tarefas e compromissos do jeito que você deixou.'}</p>
-
-      ${!CONFIGURED ? `
-        <div class="setup-note">
-          O app está rodando só neste navegador. Para sincronizar, preencha
-          <code>SUPABASE_URL</code> e <code>SUPABASE_ANON_KEY</code> no topo do arquivo.
-        </div>` : ''}
-
-      <div class="auth-card">
-        ${authMsg ? `<div class="auth-msg ${authMsg.type}">${escapeHtml(authMsg.text)}</div>` : ''}
-        <form id="auth-form" autocomplete="on">
-          <span class="field-label">e-mail</span>
-          <input type="email" id="auth-email" placeholder="voce@email.com" autocomplete="email" required/>
-          <span class="field-label">senha</span>
-          <input type="password" id="auth-pass" placeholder="${isSignup ? 'mínimo 6 caracteres' : 'sua senha'}"
-                 autocomplete="${isSignup ? 'new-password' : 'current-password'}" minlength="6" required/>
-          <button type="submit" class="auth-submit" id="auth-submit" ${authBusy ? 'disabled' : ''}>
-            ${authBusy ? 'aguarde…' : (isSignup ? 'criar conta' : 'entrar')}
-          </button>
-        </form>
-        <p class="auth-switch">
-          ${isSignup ? 'já tem conta?' : 'ainda não tem conta?'}
-          <button type="button" id="auth-switch">${isSignup ? 'entrar' : 'criar agora'}</button>
-        </p>
-      </div>
-    </div>
-  `;
-}
-
-const TABS = [
-  { v:'home', label:'visão' },
-  { v:'rotina', label:'rotina' },
-  { v:'agenda', label:'agenda' },
-  { v:'wtd', label:'quero fazer' },
-  { v:'projects', label:'projetos' },
-  { v:'week', label:'semana' },
-];
-
-function renderHeader(){
-  const now = new Date();
-  const doneCount = tasks.filter(t => isDone(t.id)).length;
-  const total = tasks.length;
-  const pct = total ? Math.round((doneCount/total)*100) : 0;
-  const r = 18, c = 2*Math.PI*r;
-  const offset = c - (pct/100)*c;
-  const mail = session && session.user ? session.user.email : null;
-
-  return `
-    <header>
-      ${mail ? `
-        <div class="account-row">
-          <span class="account-mail">salvando na conta <b>${escapeHtml(mail)}</b></span>
-          <button class="link-btn" id="signout-btn">sair</button>
-        </div>` : `
-        <div class="account-row">
-          <span class="account-mail">salvando só neste navegador</span>
-        </div>`}
-      ${ view === 'home' ? `
-        <p class="home-greeting">${greetingWord()}</p>
-        <p class="home-date">${DIAS[now.getDay()]}, ${now.getDate()} de ${MESES[now.getMonth()]}</p>
-      ` : `
-        <p class="day-label">${DIAS[now.getDay()]}</p>
-        <p class="date-sub">${now.getDate()} de ${MESES[now.getMonth()]}</p>
-      `}
-      ${ view === 'rotina' ? `
-        <div class="progress-card">
-          <svg class="ring" viewBox="0 0 44 44">
-            <circle cx="22" cy="22" r="${r}" fill="none" stroke="var(--line)" stroke-width="4"/>
-            <circle cx="22" cy="22" r="${r}" fill="none" stroke="var(--moss)" stroke-width="4"
-              stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${offset}"
-              transform="rotate(-90 22 22)"/>
-          </svg>
-          <p class="progress-text">${ total ? `<strong>${doneCount} de ${total}</strong> feitas hoje` : 'adicione sua primeira tarefa' }</p>
-        </div>
-      ` : ''}
-      <div class="tabs-scroll">
-        <div class="tabs">
-          ${TABS.map(t => `<button data-view="${t.v}" class="${view===t.v ? 'active' : ''}">${t.label}</button>`).join('')}
-        </div>
-      </div>
-    </header>
-  `;
-}
-function greetingWord(){
-  const h = new Date().getHours();
-  if(h < 5) return 'boa madrugada';
-  if(h < 12) return 'bom dia';
-  if(h < 18) return 'boa tarde';
-  return 'boa noite';
-}
-
-function renderRotina(){
-  if(tasks.length === 0){
-    return `
-      <div class="empty-state">
-        ${emptyGlyph}
-        <p>Sua rotina está vazia.<br>Toque no + para adicionar tarefas que quer repetir todo dia.</p>
-      </div>
-    `;
-  }
-  return `
-    <ul class="tasks">
-      ${tasks.map(t => `
-        <li class="task ${isDone(t.id) ? 'done' : ''}" data-id="${t.id}">
-          <button class="check" data-action="toggle" data-id="${t.id}" aria-label="marcar como feito">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-              <path d="M2 7L5.5 10.5L12 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
-          <div class="task-body">
-            <div class="task-name">${escapeHtml(t.name)}</div>
-            <div class="streak">
-              ${streakDots(t.id).map(cls => `<i class="${cls}"></i>`).join('')}
-            </div>
-          </div>
-          <button class="item-remove" data-action="remove-task" data-id="${t.id}" aria-label="remover tarefa">&times;</button>
-        </li>
-      `).join('')}
-    </ul>
-  `;
-}
-
-function renderAgenda(){
-  if(events.length === 0){
-    return `
-      <div class="empty-state">
-        ${emptyGlyph}
-        <p>Sua agenda está vazia.<br>Toque no + para marcar um compromisso no dia e horário que quiser.</p>
-      </div>
-    `;
-  }
-  const today = todayKey();
-  const upcoming = events
-    .filter(e => e.date >= today)
-    .sort((a,b) => (a.date+(a.time||'99:99')).localeCompare(b.date+(b.time||'99:99')));
-  const past = events
-    .filter(e => e.date < today)
-    .sort((a,b) => (b.date+(b.time||'')).localeCompare(a.date+(a.time||'')));
-  const ordered = [...upcoming, ...past];
-
-  const groups = [];
-  ordered.forEach(e => {
-    let g = groups.find(g => g.key === e.date);
-    if(!g){ g = { key: e.date, items: [] }; groups.push(g); }
-    g.items.push(e);
-  });
-
-  return groups.map(g => `
-    <div class="day-group">
-      <p class="day-group-label">${dayGroupLabel(g.key)} <span class="n">· ${g.items.length}</span></p>
-      <ul class="events">
-        ${g.items.map(e => `
-          <li class="event" data-id="${e.id}">
-            <div class="event-time ${e.time ? '' : 'notime'}">${e.time ? e.time : '—'}</div>
-            <div class="event-body">
-              <div class="event-title">${escapeHtml(e.title)}</div>
-            </div>
-            <button class="item-remove" data-action="remove-event" data-id="${e.id}" aria-label="remover compromisso">&times;</button>
-          </li>
-        `).join('')}
-      </ul>
-    </div>
-  `).join('');
-}
-
-/* ---------- Visão da Vida (home) ---------- */
-function renderHome(){
-  const activeProjects = projects.filter(p => p.status === 'ativo');
-  const attention = activeProjects.filter(p => {
-    const steps = projectSteps[p.id] || [];
-    return steps.length === 0 || (p.deadline && p.deadline < todayKey());
-  });
-  const ideasCount = wantToDo.filter(w => w.status === 'quero' || w.status === 'consid').length;
-  const turnedIntoProjects = wantToDo.filter(w => w.status === 'projeto').length;
-  const wk = currentWeek();
-  const filledGoals = ['financial_goal','personal_goal','learn_goal','do_goal','self_goal'].filter(k => wk[k]).length + wk.priorities.filter(Boolean).length;
-  const totalGoals = 5 + 3;
-  const weekPct = totalGoals ? Math.round((filledGoals/totalGoals)*100) : 0;
-  const focus = activeProjects[0];
-
-  return `
-    <div class="ai-hero" id="priority-ai-btn">
-      <p class="label">✨ IA</p>
-      <p class="q">O que devo priorizar?</p>
-      <p class="hint">toque para uma sugestão rápida com base nos seus projetos</p>
-    </div>
-    ${renderAiInline('priority')}
-
-    <div class="home-grid" style="margin-top:16px;">
-      <div class="home-card" data-view="projects">
-        <div class="ic">🗺️</div>
-        <div class="body">
-          <div class="title">Projetos</div>
-          <div class="sub">${activeProjects.length} ativo${activeProjects.length!==1?'s':''}${attention.length ? ` · ${attention.length} precisando de atenção` : ''}</div>
-        </div>
-        <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      </div>
-      <div class="home-card" data-view="wtd">
-        <div class="ic">🧠</div>
-        <div class="body">
-          <div class="title">Quero Fazer</div>
-          <div class="sub">${ideasCount} ideia${ideasCount!==1?'s':''}${turnedIntoProjects ? ` · ${turnedIntoProjects} viraram projeto` : ''}</div>
-        </div>
-        <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      </div>
-      <div class="home-card" data-view="week">
-        <div class="ic">📆</div>
-        <div class="body">
-          <div class="title">Esta semana</div>
-          <div class="sub">${weekPct}% planejada</div>
-        </div>
-        <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      </div>
-      ${ focus ? `
-      <div class="home-card" data-project-open="${focus.id}">
-        <div class="ic">🎯</div>
-        <div class="body">
-          <div class="title">Foco atual</div>
-          <div class="sub">${escapeHtml(focus.name)}</div>
-        </div>
-        <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      </div>` : ''}
-    </div>
-  `;
-}
-
-function renderAiInline(kind){
-  if(aiState.loading && aiState.kind === kind){
-    return `<div class="ai-loading"><span class="ai-dot"></span><span class="ai-dot"></span><span class="ai-dot"></span> pensando…</div>`;
-  }
-  if(aiState.suggestion && aiState.kind === kind){
-    if(kind === 'priority'){
-      return `
-        <div class="ai-panel">
-          <p class="ai-title">Sugestão</p>${escapeHtml(aiState.suggestion)}
-          <div class="ai-panel-actions">
-            <button class="mini-btn" id="ai-dismiss">ok, entendi</button>
-          </div>
-        </div>`;
-    }
-    if(kind === 'week_plan'){
-      const s = aiState.suggestion;
-      return `
-        <div class="ai-panel">
-          <p class="ai-title">Sugestão de semana</p>
-          ${s.priorities.map((p,i)=>`${i+1}. ${escapeHtml(p)}`).join('\n')}
-          ${s.personal_goal ? `\n🏃 ${escapeHtml(s.personal_goal)}` : ''}
-          ${s.self_goal ? `\n❤️ ${escapeHtml(s.self_goal)}` : ''}
-          <div class="ai-panel-actions">
-            <button class="mini-btn" id="ai-dismiss">ignorar</button>
-            <button class="mini-btn primary" id="ai-accept-week">usar esta semana</button>
-          </div>
-        </div>`;
-    }
-  }
-  return '';
-}
-
-/* ---------- Quero Fazer ---------- */
-function renderWantToDo(){
-  return `
-    <div class="section-top">
-      <span class="section-hint" style="margin:0;">coisas que você gostaria de fazer, sem compromisso</span>
-    </div>
-    ${wantToDo.length === 0 ? `
-      <div class="empty-state">
-        ${emptyGlyph}
-        <p>Nada por aqui ainda.<br>Toque no + e registre algo que você quer fazer, ver, aprender ou conquistar.</p>
-      </div>
-    ` : `
-      <ul class="wtd">
-        ${wantToDo.map(w => `
-          <li class="wtd-item" data-id="${w.id}">
-            <div class="wtd-top">
-              <div>
-                <div class="wtd-title">${escapeHtml(w.title)}</div>
-                ${w.description ? `<div class="wtd-desc">${escapeHtml(w.description)}</div>` : ''}
-              </div>
-              <button class="item-remove" data-action="remove-wtd" data-id="${w.id}" aria-label="remover">&times;</button>
-            </div>
-            <div class="wtd-meta">
-              <span class="wtd-cat">${escapeHtml(w.category || 'pessoal')}</span>
-              <select class="status-pill s-${statusClass(w.status)}" data-action="wtd-status" data-id="${w.id}">
-                ${WTD_STATUS.map(s => `<option value="${s.v}" ${w.status===s.v?'selected':''}>${s.label}</option>`).join('')}
-              </select>
-            </div>
-            ${w.status !== 'projeto' && w.status !== 'concluido' && w.status !== 'descartado' ? `
-              <div class="wtd-actions">
-                <button class="mini-btn primary" data-action="wtd-to-project" data-id="${w.id}">virar projeto</button>
-              </div>
-            ` : ''}
-          </li>
-        `).join('')}
-      </ul>
-    `}
-  `;
-}
-function statusClass(v){
-  return { quero:'quero', consid:'consid', projeto:'projeto', concluido:'concluido', descartado:'descartado' }[v] || 'quero';
-}
-
-/* ---------- Projetos ---------- */
-function renderProjects(){
-  return `
-    <div class="section-top">
-      <span class="section-hint" style="margin:0;">coisas que você decidiu realmente executar</span>
-    </div>
-    ${projects.length === 0 ? `
-      <div class="empty-state">
-        ${emptyGlyph}
-        <p>Nenhum projeto ainda.<br>Toque no + para começar um, ou transforme uma ideia de "Quero Fazer".</p>
-      </div>
-    ` : `
-      <ul class="projects">
-        ${projects.map(p => {
-          const steps = projectSteps[p.id] || [];
-          const done = steps.filter(s => s.done).length;
-          const pct = steps.length ? Math.round((done/steps.length)*100) : 0;
-          return `
-            <li class="project-card" data-project-open="${p.id}">
-              <div class="project-top">
-                <div class="project-name">${escapeHtml(p.name)}</div>
-                <span class="status-tag ${p.status}">${p.status}</span>
-              </div>
-              <div class="project-cat">${escapeHtml(p.category || 'outro')}</div>
-              <div class="progress-row">
-                <div class="progress-bar-track"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
-                <div class="progress-pct">${pct}%</div>
-              </div>
-              <div class="project-foot">
-                <span>${steps.length ? `${done}/${steps.length} etapas` : 'sem etapas ainda'}</span>
-                ${p.deadline ? `<span>até ${formatDatePt(p.deadline)}</span>` : ''}
-              </div>
-            </li>
-          `;
-        }).join('')}
-      </ul>
-    `}
-  `;
-}
-function formatDatePt(key){
-  const d = parseKey(key);
-  return `${d.getDate()} de ${MESES[d.getMonth()]}`;
-}
-
-/* ---------- Semana ---------- */
-function renderWeek(){
-  const key = weekKey();
-  const wk = currentWeek();
-  return `
-    <p class="week-label">planejamento de ${key.replace('-W',' · semana ')}</p>
-
-    <button class="ai-btn big" id="week-ai-btn">✨ organizar minha semana</button>
-    ${renderAiInline('week_plan')}
-
-    <div class="week-card">
-      <div class="wlabel">🎯 3 prioridades da semana</div>
-      ${[0,1,2].map(i => `
-        <div class="priority-row">
-          <span class="priority-num">${i+1}</span>
-          <input type="text" data-week-field="priorities" data-idx="${i}" value="${escapeHtml(wk.priorities[i]||'')}" placeholder="prioridade ${i+1}" maxlength="80"/>
-        </div>
-      `).join('')}
-    </div>
-
-    <div class="week-card">
-      <div class="wlabel">💰 meta financeira</div>
-      <input type="text" data-week-field="financial_goal" value="${escapeHtml(wk.financial_goal)}" placeholder="ex: economizar R$ 200" maxlength="60"/>
-    </div>
-    <div class="week-card">
-      <div class="wlabel">🏃 meta pessoal</div>
-      <input type="text" data-week-field="personal_goal" value="${escapeHtml(wk.personal_goal)}" placeholder="ex: treinar 3 vezes" maxlength="60"/>
-    </div>
-    <div class="week-card">
-      <div class="wlabel">📚 algo que quero aprender</div>
-      <input type="text" data-week-field="learn_goal" value="${escapeHtml(wk.learn_goal)}" placeholder="ex: estudar inglês" maxlength="60"/>
-    </div>
-    <div class="week-card">
-      <div class="wlabel">🎮 algo que quero fazer</div>
-      <input type="text" data-week-field="do_goal" value="${escapeHtml(wk.do_goal)}" placeholder="ex: jogar no sábado" maxlength="60"/>
-    </div>
-    <div class="week-card">
-      <div class="wlabel">❤️ algo para mim</div>
-      <input type="text" data-week-field="self_goal" value="${escapeHtml(wk.self_goal)}" placeholder="ex: ter uma noite livre" maxlength="60"/>
-    </div>
-  `;
-}
-
-function renderSheet(){
-  if(!sheetKind) return '';
-
-  if(sheetKind === 'task'){
-    return `
-      <div class="sheet-overlay ${sheetOpen ? 'open' : ''}" id="sheet-overlay">
-        <div class="sheet" id="sheet">
-          <div class="sheet-handle"></div>
-          <p class="sheet-title">nova tarefa</p>
-          <form id="add-form">
-            <span class="field-label">o que você quer repetir todo dia?</span>
-            <input type="text" id="new-task" placeholder="ex: beber água, ler 10 páginas…" autocomplete="off" maxlength="60"/>
-            <button type="submit" class="sheet-submit" id="submit-btn" disabled>adicionar tarefa</button>
-          </form>
-        </div>
-      </div>
-    `;
+  function setSync(ok){
+    els.syncDot.classList.toggle('offline', !ok);
+    els.syncLabel.textContent = configured
+      ? (ok ? 'Sincronizado com a nuvem' : 'Falha de sincronização — tentando novamente')
+      : 'Modo local (Supabase não configurado)';
   }
 
-  if(sheetKind === 'wtd'){
-    return `
-      <div class="sheet-overlay ${sheetOpen ? 'open' : ''}" id="sheet-overlay">
-        <div class="sheet" id="sheet">
-          <div class="sheet-handle"></div>
-          <p class="sheet-title">quero fazer</p>
-          <form id="add-form">
-            <span class="field-label">o que você gostaria de fazer?</span>
-            <input type="text" id="new-wtd-title" placeholder="ex: aprender inglês, comprar uma câmera…" autocomplete="off" maxlength="80"/>
-            <span class="field-label">categoria</span>
-            <div class="time-row" style="margin-bottom:22px;">
-              ${WTD_CATEGORIES.map(c => `<button type="button" class="time-chip ${c==='pessoal'?'selected':''}" data-cat="${c}">${c}</button>`).join('')}
-            </div>
-            <button type="submit" class="sheet-submit" id="submit-btn" disabled>adicionar</button>
-          </form>
-        </div>
-      </div>
-    `;
+  // ---------- Auth ----------
+  function setAuthMode(mode){
+    authMode = mode;
+    els.tabLogin.dataset.active = mode === 'login';
+    els.tabSignup.dataset.active = mode === 'signup';
+    els.authTitle.textContent = mode === 'login' ? 'Bem-vindo de volta' : 'Crie sua conta';
+    els.authSub.textContent = mode === 'login'
+      ? 'Entre para ver e organizar as tarefas do seu dia.'
+      : 'Leva menos de um minuto. Seus dados ficam só com você.';
+    els.authSubmitBtn.textContent = mode === 'login' ? 'Entrar' : 'Criar conta';
+    hideAuthMsg();
   }
-
-  if(sheetKind === 'project'){
-    return `
-      <div class="sheet-overlay ${sheetOpen ? 'open' : ''}" id="sheet-overlay">
-        <div class="sheet" id="sheet">
-          <div class="sheet-handle"></div>
-          <p class="sheet-title">novo projeto</p>
-          <form id="add-form">
-            <span class="field-label">nome do projeto</span>
-            <input type="text" id="new-project-name" placeholder="ex: nova fonte de renda, aprender inglês…" autocomplete="off" maxlength="80"/>
-            <button type="submit" class="sheet-submit" id="submit-btn" disabled>criar e detalhar</button>
-          </form>
-        </div>
-      </div>
-    `;
+  function showAuthMsg(text, type){
+    els.authMsg.textContent = text;
+    els.authMsg.className = 'auth-msg show ' + type;
   }
+  function hideAuthMsg(){ els.authMsg.className = 'auth-msg'; }
 
-  // sheetKind === 'event'
-  const days = nextNDays(21);
-  const quickTimes = [
-    { label: 'manhã', value: '09:00' },
-    { label: 'tarde', value: '14:00' },
-    { label: 'noite', value: '19:00' },
-  ];
+  els.tabLogin.addEventListener('click', () => setAuthMode('login'));
+  els.tabSignup.addEventListener('click', () => setAuthMode('signup'));
 
-  return `
-    <div class="sheet-overlay ${sheetOpen ? 'open' : ''}" id="sheet-overlay">
-      <div class="sheet" id="sheet">
-        <div class="sheet-handle"></div>
-        <p class="sheet-title">novo compromisso</p>
-        <form id="add-form">
-          <span class="field-label">o que é?</span>
-          <input type="text" id="new-event-title" placeholder="ex: reunião com o time, dentista…" autocomplete="off" maxlength="80"/>
-
-          <span class="field-label">qual dia?</span>
-          <div class="date-strip" id="date-strip">
-            ${days.map(k => {
-              const d = parseKey(k);
-              return `<div class="date-pill ${k === selectedDate ? 'selected' : ''}" data-date="${k}">
-                <span class="dow">${DIAS_ABR[d.getDay()]}</span>
-                <span class="num">${d.getDate()}</span>
-              </div>`;
-            }).join('')}
-          </div>
-
-          <span class="field-label">que horas?</span>
-          <div class="time-row">
-            ${quickTimes.map(qt => `
-              <button type="button" class="time-chip ${selectedTime === qt.value ? 'selected' : ''}" data-time="${qt.value}">${qt.label}</button>
-            `).join('')}
-            <div class="time-input-wrap">
-              <input type="time" id="time-input" value="${selectedTime}"/>
-            </div>
-          </div>
-
-          <button type="submit" class="sheet-submit" id="submit-btn" disabled>adicionar à agenda</button>
-        </form>
-      </div>
-    </div>
-  `;
-}
-
-function renderQuickMenu(){
-  const options = [
-    { kind:'wtd', ic:'🧠', txt:'Quero Fazer', sub:'uma ideia ou desejo, sem prazo' },
-    { kind:'project', ic:'🗺️', txt:'Projeto', sub:'algo que você decidiu executar' },
-    { kind:'event', ic:'📆', txt:'Compromisso', sub:'agenda, dia e horário' },
-    { kind:'task', ic:'📋', txt:'Tarefa', sub:'rotina de repetir todo dia' },
-  ];
-  return `
-    <div class="quick-overlay ${quickOpen ? 'open' : ''}" id="quick-overlay">
-      <div class="quick-sheet" id="quick-sheet">
-        <div class="sheet-handle"></div>
-        ${options.map(o => `
-          <div class="quick-opt" data-quick="${o.kind}">
-            <div class="ic">${o.ic}</div>
-            <div>
-              <div class="txt">${o.txt}</div>
-              <div class="sub">${o.sub}</div>
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    </div>
-  `;
-}
-
-function renderDetailModal(){
-  if(!detailOpen || detailKind !== 'project' || !detailId) return '';
-  const p = projects.find(p => p.id === detailId);
-  if(!p) return '';
-  const steps = (projectSteps[p.id] || []);
-  const done = steps.filter(s => s.done).length;
-  const pct = steps.length ? Math.round((done/steps.length)*100) : 0;
-  const showAi = aiState.kind === 'project_plan' && aiState.forId === p.id;
-
-  return `
-    <div class="detail-overlay ${detailOpen ? 'open' : ''}" id="detail-overlay">
-      <div class="detail-sheet" id="detail-sheet">
-        <div class="detail-head">
-          <button class="detail-back" id="detail-close" aria-label="fechar">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 5L9 12L15 19" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <span class="status-tag ${p.status}">${p.status}</span>
-        </div>
-        <div class="detail-body">
-          <input class="detail-title-input" id="proj-name" value="${escapeHtml(p.name)}" maxlength="80" placeholder="nome do projeto"/>
-
-          <div class="progress-row" style="margin-bottom:18px;">
-            <div class="progress-bar-track"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
-            <div class="progress-pct">${pct}%</div>
-          </div>
-
-          <div class="field-group">
-            <span class="field-label">objetivo</span>
-            <textarea id="proj-objective" placeholder="o que significa concluir este projeto?">${escapeHtml(p.objective||'')}</textarea>
-          </div>
-
-          <div class="field-row2">
-            <div class="field-group">
-              <span class="field-label">categoria</span>
-              <select id="proj-category">
-                ${PROJECT_CATEGORIES.map(c => `<option value="${c}" ${p.category===c?'selected':''}>${c}</option>`).join('')}
-              </select>
-            </div>
-            <div class="field-group">
-              <span class="field-label">status</span>
-              <select id="proj-status">
-                ${PROJECT_STATUS.map(s => `<option value="${s.v}" ${p.status===s.v?'selected':''}>${s.label}</option>`).join('')}
-              </select>
-            </div>
-          </div>
-
-          <div class="field-row2">
-            <div class="field-group">
-              <span class="field-label">prazo (opcional)</span>
-              <input type="date" id="proj-deadline" value="${p.deadline||''}"/>
-            </div>
-          </div>
-
-          <div class="section-top" style="margin:6px 0 8px;">
-            <span class="field-label" style="margin:0;">etapas</span>
-            <button class="ai-btn" id="proj-ai-btn" ${aiState.loading && aiState.kind==='project_plan' ? 'disabled' : ''}>✨ ajudar com IA</button>
-          </div>
-
-          ${aiState.loading && aiState.kind==='project_plan' && aiState.forId===p.id ? `
-            <div class="ai-loading"><span class="ai-dot"></span><span class="ai-dot"></span><span class="ai-dot"></span> pensando no plano…</div>
-          ` : ''}
-          ${showAi && aiState.suggestion ? `
-            <div class="ai-panel">
-              <p class="ai-title">Sugestão da IA</p>
-              <strong>Objetivo:</strong> ${escapeHtml(aiState.suggestion.objective)}
-              ${'\n\nEtapas:\n' + aiState.suggestion.steps.map((s,i)=>`${i+1}. ${escapeHtml(s)}`).join('\n')}
-              <div class="ai-panel-actions">
-                <button class="mini-btn" id="ai-dismiss">ignorar</button>
-                <button class="mini-btn primary" id="ai-accept-project">aceitar tudo</button>
-              </div>
-            </div>
-          ` : ''}
-
-          <ul class="steps-list">
-            ${steps.map(s => `
-              <li class="step-item ${s.done?'done':''}" data-step-id="${s.id}">
-                <button class="step-check" data-action="toggle-step" data-id="${s.id}">
-                  <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M2 7L5.5 10.5L12 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </button>
-                <span class="step-name">${escapeHtml(s.name)}</span>
-                <button class="step-remove" data-action="remove-step" data-id="${s.id}">&times;</button>
-              </li>
-            `).join('')}
-          </ul>
-          <div class="add-step-row">
-            <input type="text" id="new-step-input" placeholder="adicionar etapa…" maxlength="80"/>
-            <button class="add-step-btn" id="add-step-btn">+</button>
-          </div>
-
-          <div class="field-group" style="margin-top:20px;">
-            <span class="field-label">observações</span>
-            <textarea id="proj-notes" placeholder="anotações livres">${escapeHtml(p.notes||'')}</textarea>
-          </div>
-
-          <div class="danger-zone">
-            <button class="btn-delete" id="proj-delete">excluir projeto</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-function openQuickMenu(){ quickOpen = true; render(); }
-function closeQuickMenu(){ quickOpen = false; render(); }
-
-function openSheet(kind){
-  sheetKind = kind;
-  selectedDate = todayKey();
-  selectedTime = '';
-  sheetOpen = true;
-  render();
-  const idMap = { task:'new-task', event:'new-event-title', wtd:'new-wtd-title', project:'new-project-name' };
-  const input = document.getElementById(idMap[kind]);
-  if(input) setTimeout(() => input.focus(), 250);
-}
-function closeSheet(){
-  sheetOpen = false;
-  render();
-  setTimeout(() => { sheetKind = null; }, 260);
-}
-
-function openDetail(kind, id){
-  detailKind = kind; detailId = id; detailOpen = true;
-  aiState = { loading:false, kind:null, forId:null, suggestion:null };
-  render();
-}
-function closeDetail(){
-  detailOpen = false;
-  render();
-  setTimeout(() => { detailKind = null; detailId = null; }, 260);
-}
-
-function viewBody(){
-  switch(view){
-    case 'home': return renderHome();
-    case 'rotina': return renderRotina();
-    case 'agenda': return renderAgenda();
-    case 'wtd': return renderWantToDo();
-    case 'projects': return renderProjects();
-    case 'week': return renderWeek();
-    default: return renderHome();
-  }
-}
-
-function render(){
-  const app = document.getElementById('app');
-
-  if(screen === 'auth'){
-    app.innerHTML = renderAuth();
-    bindAuth(app);
-    return;
-  }
-
-  app.innerHTML = `
-    ${renderHeader()}
-    <main>
-      ${ viewBody() }
-    </main>
-    <button class="fab" id="fab" aria-label="adicionar">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="white" stroke-width="2.2" stroke-linecap="round"/></svg>
-    </button>
-    ${renderSheet()}
-    ${renderQuickMenu()}
-    ${renderDetailModal()}
-  `;
-
-  const signoutBtn = document.getElementById('signout-btn');
-  if(signoutBtn) signoutBtn.addEventListener('click', signOut);
-
-  // tabs
-  app.querySelectorAll('.tabs button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      view = btn.dataset.view;
-      render();
-    });
-  });
-
-  // navegação a partir da home
-  app.querySelectorAll('[data-view]').forEach(el => {
-    if(el.tagName === 'BUTTON' && el.closest('.tabs')) return; // já tratado acima
-    el.addEventListener('click', () => { view = el.dataset.view; render(); });
-  });
-  app.querySelectorAll('[data-project-open]').forEach(el => {
-    el.addEventListener('click', () => openDetail('project', el.dataset.projectOpen));
-  });
-
-  // ai hero (o que devo priorizar?)
-  const prioBtn = document.getElementById('priority-ai-btn');
-  if(prioBtn) prioBtn.addEventListener('click', runPriorityAI);
-  const weekAiBtn = document.getElementById('week-ai-btn');
-  if(weekAiBtn) weekAiBtn.addEventListener('click', runWeekAI);
-  const aiDismiss = document.getElementById('ai-dismiss');
-  if(aiDismiss) aiDismiss.addEventListener('click', dismissAI);
-  const aiAcceptWeek = document.getElementById('ai-accept-week');
-  if(aiAcceptWeek) aiAcceptWeek.addEventListener('click', acceptWeekAI);
-
-  // rotina actions
-  app.querySelectorAll('[data-action="toggle"]').forEach(btn => {
-    btn.addEventListener('click', () => toggleDone(btn.dataset.id));
-  });
-  app.querySelectorAll('[data-action="remove-task"]').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      try{
-        await backend.removeTask(btn.dataset.id);
-        render();
-      }catch(e){
-        render();
-        toast('não deu para remover a tarefa.');
-      }
-    });
-  });
-  app.querySelectorAll('[data-action="remove-event"]').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      try{
-        await backend.removeEvent(btn.dataset.id);
-        render();
-      }catch(e){
-        render();
-        toast('não deu para remover o compromisso.');
-      }
-    });
-  });
-
-  // quero fazer: remover / status / virar projeto
-  app.querySelectorAll('[data-action="remove-wtd"]').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      try{ await backend.removeWtd(btn.dataset.id); render(); }
-      catch(e){ toast('não deu para remover.'); }
-    });
-  });
-  app.querySelectorAll('[data-action="wtd-status"]').forEach(sel => {
-    sel.addEventListener('change', async () => {
-      try{ await backend.updateWtd(sel.dataset.id, { status: sel.value }); render(); }
-      catch(e){ toast('não deu para atualizar.'); render(); }
-    });
-  });
-  app.querySelectorAll('[data-action="wtd-to-project"]').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      const w = wantToDo.find(w => w.id === btn.dataset.id);
-      if(!w) return;
-      try{
-        await backend.updateWtd(w.id, { status: 'projeto' });
-        const proj = await backend.addProject({ name: w.title, category: mapWtdCategoryToProject(w.category), description: w.description || '' });
-        view = 'projects';
-        render();
-        openDetail('project', proj.id);
-      }catch(e){ toast('não deu para transformar em projeto.'); }
-    });
-  });
-
-  // fab + menu rápido
-  document.getElementById('fab').addEventListener('click', openQuickMenu);
-  const quickOverlay = document.getElementById('quick-overlay');
-  if(quickOverlay){
-    quickOverlay.addEventListener('click', (e) => { if(e.target === quickOverlay) closeQuickMenu(); });
-    quickOverlay.querySelectorAll('[data-quick]').forEach(opt => {
-      opt.addEventListener('click', () => {
-        const kind = opt.dataset.quick;
-        closeQuickMenu();
-        setTimeout(() => openSheet(kind), 200);
-      });
-    });
-  }
-
-  // sheet de criação (tarefa / compromisso / quero fazer / projeto)
-  const overlay = document.getElementById('sheet-overlay');
-  if(overlay){
-    overlay.addEventListener('click', (e) => { if(e.target === overlay) closeSheet(); });
-    const form = document.getElementById('add-form');
-    const submitBtn = document.getElementById('submit-btn');
-
-    if(sheetKind === 'task'){
-      const input = document.getElementById('new-task');
-      input.addEventListener('input', () => { submitBtn.disabled = !input.value.trim(); });
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const name = input.value.trim();
-        if(!name) return;
-        submitBtn.disabled = true; submitBtn.textContent = 'salvando…';
-        try{ await backend.addTask(name); closeSheet(); }
-        catch(err){ submitBtn.disabled = false; submitBtn.textContent = 'adicionar tarefa'; toast('não deu para salvar a tarefa.'); }
-      });
-
-    } else if(sheetKind === 'wtd'){
-      const input = document.getElementById('new-wtd-title');
-      let cat = 'pessoal';
-      input.addEventListener('input', () => { submitBtn.disabled = !input.value.trim(); });
-      overlay.querySelectorAll('[data-cat]').forEach(chip => {
-        chip.addEventListener('click', () => {
-          cat = chip.dataset.cat;
-          overlay.querySelectorAll('[data-cat]').forEach(c => c.classList.remove('selected'));
-          chip.classList.add('selected');
-        });
-      });
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const title = input.value.trim();
-        if(!title) return;
-        submitBtn.disabled = true; submitBtn.textContent = 'salvando…';
-        try{ await backend.addWtd({ title, category: cat }); closeSheet(); }
-        catch(err){ submitBtn.disabled = false; submitBtn.textContent = 'adicionar'; toast('não deu para salvar.'); }
-      });
-
-    } else if(sheetKind === 'project'){
-      const input = document.getElementById('new-project-name');
-      input.addEventListener('input', () => { submitBtn.disabled = !input.value.trim(); });
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const name = input.value.trim();
-        if(!name) return;
-        submitBtn.disabled = true; submitBtn.textContent = 'criando…';
-        try{
-          const proj = await backend.addProject({ name });
-          closeSheet();
-          setTimeout(() => openDetail('project', proj.id), 220);
-        }catch(err){ submitBtn.disabled = false; submitBtn.textContent = 'criar e detalhar'; toast('não deu para criar o projeto.'); }
-      });
-
-    } else { // event
-      const titleInput = document.getElementById('new-event-title');
-      const timeInput = document.getElementById('time-input');
-      function refreshSubmit(){ submitBtn.disabled = !titleInput.value.trim(); }
-      titleInput.addEventListener('input', refreshSubmit);
-      refreshSubmit();
-
-      overlay.querySelectorAll('.date-pill').forEach(pill => {
-        pill.addEventListener('click', () => {
-          selectedDate = pill.dataset.date;
-          overlay.querySelectorAll('.date-pill').forEach(p => p.classList.remove('selected'));
-          pill.classList.add('selected');
-        });
-      });
-      overlay.querySelectorAll('.time-chip').forEach(chip => {
-        chip.addEventListener('click', () => {
-          selectedTime = chip.dataset.time;
-          timeInput.value = selectedTime;
-          overlay.querySelectorAll('.time-chip').forEach(c => c.classList.remove('selected'));
-          chip.classList.add('selected');
-        });
-      });
-      timeInput.addEventListener('input', () => {
-        selectedTime = timeInput.value;
-        overlay.querySelectorAll('.time-chip').forEach(c => c.classList.toggle('selected', c.dataset.time === selectedTime));
-      });
-
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const title = titleInput.value.trim();
-        if(!title) return;
-        submitBtn.disabled = true; submitBtn.textContent = 'salvando…';
-        try{ await backend.addEvent({ title, date: selectedDate, time: timeInput.value || '' }); closeSheet(); }
-        catch(err){ submitBtn.disabled = false; submitBtn.textContent = 'adicionar à agenda'; toast('não deu para salvar o compromisso.'); }
-      });
-    }
-  }
-
-  // modal de detalhe do projeto
-  const detailOverlayEl = document.getElementById('detail-overlay');
-  if(detailOverlayEl){
-    const closeBtn = document.getElementById('detail-close');
-    if(closeBtn) closeBtn.addEventListener('click', closeDetail);
-
-    const p = projects.find(p => p.id === detailId);
-    if(p){
-      const nameInput = document.getElementById('proj-name');
-      const objInput = document.getElementById('proj-objective');
-      const catSel = document.getElementById('proj-category');
-      const statusSel = document.getElementById('proj-status');
-      const deadlineInput = document.getElementById('proj-deadline');
-      const notesInput = document.getElementById('proj-notes');
-
-      const saveField = async (patch) => {
-        try{ await backend.updateProject(p.id, patch); }
-        catch(e){ toast('não deu para salvar essa alteração.'); }
-      };
-      nameInput.addEventListener('blur', () => { if(nameInput.value.trim()) saveField({ name: nameInput.value.trim() }); });
-      objInput.addEventListener('blur', () => saveField({ objective: objInput.value }));
-      notesInput.addEventListener('blur', () => saveField({ notes: notesInput.value }));
-      catSel.addEventListener('change', () => saveField({ category: catSel.value }));
-      statusSel.addEventListener('change', async () => { await saveField({ status: statusSel.value }); render(); });
-      deadlineInput.addEventListener('change', () => saveField({ deadline: deadlineInput.value || null }));
-
-      const stepInput = document.getElementById('new-step-input');
-      const addStepBtn = document.getElementById('add-step-btn');
-      const submitNewStep = async () => {
-        const name = stepInput.value.trim();
-        if(!name) return;
-        try{ await backend.addStep(p.id, name); render(); openDetail('project', p.id); }
-        catch(e){ toast('não deu para adicionar a etapa.'); }
-      };
-      addStepBtn.addEventListener('click', submitNewStep);
-      stepInput.addEventListener('keydown', (e) => { if(e.key === 'Enter'){ e.preventDefault(); submitNewStep(); } });
-
-      app.querySelectorAll('[data-action="toggle-step"]').forEach(btn => {
-        btn.addEventListener('click', async () => {
-          const list = projectSteps[p.id] || [];
-          const s = list.find(s => s.id === btn.dataset.id);
-          const nextDone = !(s && s.done);
-          try{ await backend.toggleStep(p.id, btn.dataset.id, nextDone); render(); openDetail('project', p.id); }
-          catch(e){ toast('não deu para atualizar a etapa.'); }
-        });
-      });
-      app.querySelectorAll('[data-action="remove-step"]').forEach(btn => {
-        btn.addEventListener('click', async () => {
-          try{ await backend.removeStep(p.id, btn.dataset.id); render(); openDetail('project', p.id); }
-          catch(e){ toast('não deu para remover a etapa.'); }
-        });
-      });
-
-      const aiBtn = document.getElementById('proj-ai-btn');
-      if(aiBtn) aiBtn.addEventListener('click', () => runProjectAI(p.id));
-      const aiAcceptProj = document.getElementById('ai-accept-project');
-      if(aiAcceptProj) aiAcceptProj.addEventListener('click', async () => { await acceptProjectAI(); openDetail('project', p.id); });
-      const aiDismissProj = document.getElementById('ai-dismiss');
-      if(aiDismissProj) aiDismissProj.addEventListener('click', () => { dismissAI(); openDetail('project', p.id); });
-
-      const delBtn = document.getElementById('proj-delete');
-      if(delBtn) delBtn.addEventListener('click', async () => {
-        if(!confirm(`excluir o projeto "${p.name}"? essa ação não pode ser desfeita.`)) return;
-        try{ await backend.removeProject(p.id); closeDetail(); }
-        catch(e){ toast('não deu para excluir o projeto.'); }
-      });
-    }
-  }
-
-  // semana: campos de texto
-  app.querySelectorAll('[data-week-field]').forEach(input => {
-    input.addEventListener('blur', async () => {
-      const wk = { ...emptyWeek(), ...currentWeek() };
-      const field = input.dataset.weekField;
-      if(field === 'priorities'){
-        wk.priorities[Number(input.dataset.idx)] = input.value;
-      } else {
-        wk[field] = input.value;
-      }
-      try{ await backend.saveWeek(weekKey(), wk); }
-      catch(e){ toast('não deu para salvar a semana.'); }
-    });
-  });
-}
-
-function mapWtdCategoryToProject(cat){
-  const map = { aprendizado:'aprendizado', viagem:'viagem', financeiro:'financeiro', saúde:'saúde' };
-  return map[cat] || 'outro';
-}
-
-function bindAuth(app){
-  const form = document.getElementById('auth-form');
-  const emailEl = document.getElementById('auth-email');
-  const passEl = document.getElementById('auth-pass');
-
-  document.getElementById('auth-switch').addEventListener('click', () => {
-    authMode = authMode === 'login' ? 'signup' : 'login';
-    authMsg = null;
-    render();
-  });
-
-  form.addEventListener('submit', async (e) => {
+  els.authForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const email = emailEl.value.trim();
-    const password = passEl.value;
-    if(!email || password.length < 6){
-      authMsg = { type:'err', text:'preencha o e-mail e uma senha de 6 caracteres ou mais.' };
-      return render();
-    }
-    if(!CONFIGURED){
-      // sem Supabase configurado: segue direto no modo local
-      screen = 'app';
-      await backend.load();
-      return render();
-    }
-    authBusy = true; authMsg = null; render();
+    if(!configured) return;
+    hideAuthMsg();
+    els.authSubmitBtn.disabled = true;
+    const email = $('#authEmail').value.trim();
+    const password = $('#authPassword').value;
     try{
-      const s = authMode === 'signup'
-        ? await signUp(email, password)
-        : await signIn(email, password);
-
-      if(!s){
-        // conta criada, mas o projeto exige confirmação por e-mail
-        authBusy = false;
-        authMode = 'login';
-        authMsg = { type:'ok', text:'conta criada. confirme o e-mail que enviamos e volte para entrar.' };
-        return render();
+      if(authMode === 'login'){
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if(error) throw error;
+        await onAuthed(data.user);
+      } else {
+        const { data, error } = await supabase.auth.signUp({ email, password });
+        if(error) throw error;
+        if(data.session){
+          await onAuthed(data.user);
+        } else {
+          showAuthMsg('Conta criada! Verifique seu e-mail para confirmar o acesso.', 'success');
+        }
       }
-      session = s;
-      await enterApp();
-    }catch(err){
-      authBusy = false;
-      authMsg = { type:'err', text: authErrorText(err) };
-      render();
+    } catch(err){
+      showAuthMsg(traduzErro(err.message), 'error');
+    } finally {
+      els.authSubmitBtn.disabled = false;
     }
   });
 
-  setTimeout(() => emailEl && emailEl.focus(), 120);
-}
-
-async function enterApp(){
-  try{
-    await backend.load();
-  }catch(e){
-    toast('não deu para carregar seus dados. rode o script SQL no Supabase.');
-  }
-  authBusy = false;
-  screen = 'app';
-  render();
-}
-
-/* ============================================================
-   9. BOOT
-   ============================================================ */
-(async function init(){
-  if(!CONFIGURED){
-    backend = localBackend;
-    screen = 'auth';   // continua pedindo e-mail/senha, mas roda local
-    return render();
+  function traduzErro(msg){
+    if(/invalid login credentials/i.test(msg)) return 'E-mail ou senha incorretos.';
+    if(/already registered/i.test(msg)) return 'Este e-mail já tem uma conta. Tente entrar.';
+    if(/password/i.test(msg) && /6/i.test(msg)) return 'A senha precisa ter no mínimo 6 caracteres.';
+    return msg;
   }
 
-  const { data } = await sb.auth.getSession();
-  session = data.session;
-
-  sb.auth.onAuthStateChange((_evt, s) => {
-    const wasLogged = !!session;
-    session = s;
-    if(!s && wasLogged){
-      screen = 'auth';
-      tasks = []; log = {}; events = []; wantToDo = []; projects = []; projectSteps = {}; weeklyPlans = {};
-      render();
-    }
-  });
-
-  if(session){
-    await enterApp();
-  } else {
-    screen = 'auth';
+  async function onAuthed(user){
+    currentUser = user;
+    els.userEmailLabel.textContent = user.email;
+    els.authScreen.hidden = true;
+    els.appShell.hidden = false;
+    els.fab.hidden = false;
+    tasks = await fetchTasks();
     render();
   }
+
+  els.userBtn.addEventListener('click', () => { els.userDropdown.hidden = !els.userDropdown.hidden; });
+  document.addEventListener('click', (e) => {
+    if(!els.userBtn.contains(e.target) && !els.userDropdown.contains(e.target)) els.userDropdown.hidden = true;
+  });
+  els.logoutBtn.addEventListener('click', async () => {
+    if(configured) await supabase.auth.signOut();
+    currentUser = null;
+    tasks = [];
+    els.appShell.hidden = true;
+    els.fab.hidden = true;
+    els.authScreen.hidden = false;
+    els.authForm.reset();
+    setAuthMode('login');
+  });
+
+  async function initAuth(){
+    if(!configured){
+      els.configWarning.hidden = false;
+      // modo local: entra direto sem tela de login
+      currentUser = { id: 'local', email: 'modo-local' };
+      tasks = await fetchTasks();
+      els.appShell.hidden = false;
+      els.fab.hidden = false;
+      render();
+      return;
+    }
+    const { data } = await supabase.auth.getSession();
+    if(data.session){
+      await onAuthed(data.session.user);
+    } else {
+      els.authScreen.hidden = false;
+    }
+  }
+
+  // ---------- Render ----------
+  function setTodayChip(){
+    const d = new Date();
+    const fmt = d.toLocaleDateString('pt-BR', { weekday:'long', day:'2-digit', month:'2-digit' });
+    els.todayChip.textContent = fmt;
+  }
+  function greetingByHour(){
+    const h = new Date().getHours();
+    const saudacao = h < 12 ? 'Bom dia' : (h < 18 ? 'Boa tarde' : 'Boa noite');
+    return `${saudacao}. Vamos organizar seu dia.`;
+  }
+  function todayTasks(){
+    const t = todayISO();
+    return tasks.filter(x => x.data === t).sort((a,b) => a.horario.localeCompare(b.horario));
+  }
+
+  function render(){
+    const list = todayTasks();
+    const total = list.length;
+    const done = list.filter(t => t.done).length;
+    const pending = total - done;
+    const pct = total === 0 ? 0 : Math.round((done/total)*100);
+
+    els.statTotal.textContent = total;
+    els.statDone.textContent = done;
+    els.statPending.textContent = pending;
+    els.arcPercent.textContent = pct + '%';
+
+    const offset = CIRC - (pct/100)*CIRC;
+    els.arcFill.style.strokeDasharray = CIRC;
+    requestAnimationFrame(() => { els.arcFill.style.strokeDashoffset = offset; });
+
+    const focusTasks = list.filter(t => t.prioridade === 'alta' && !t.done);
+    els.focusCount.textContent = focusTasks.length;
+    els.greetingText.textContent = greetingByHour();
+
+    if(list.length === 0){
+      els.timelineList.innerHTML = `
+        <div class="empty-state">
+          <span class="emoji">🌤️</span>
+          <p>Nenhuma tarefa para hoje. Toque no + para criar a primeira.</p>
+        </div>`;
+      return;
+    }
+    els.timelineList.innerHTML = list.map(rowTemplate).join('');
+    els.timelineList.querySelectorAll('[data-check]').forEach(btn => btn.addEventListener('click', () => toggleDone(btn.dataset.check)));
+    els.timelineList.querySelectorAll('[data-edit]').forEach(btn => btn.addEventListener('click', () => openEdit(btn.dataset.edit)));
+    els.timelineList.querySelectorAll('[data-del]').forEach(btn => btn.addEventListener('click', () => handleDelete(btn.dataset.del)));
+  }
+
+  function rowTemplate(t){
+    const badgeClass = t.prioridade === 'alta' ? 'badge-alta' : t.prioridade === 'media' ? 'badge-media' : 'badge-baixa';
+    const badgeIcon = t.prioridade === 'alta' ? '🔴' : t.prioridade === 'media' ? '🟡' : '🟢';
+    const recorrenciaLabel = { nenhuma:'', diaria:'🔄 Diária', semanal:'🔄 Semanal', mensal:'🔄 Mensal' }[t.recorrencia] || '';
+    const lembreteIcon = t.lembrete && t.lembrete !== 'nenhum' ? `<span class="badge-icon" title="Lembrete ${t.lembrete}">🔔</span>` : '';
+    return `
+      <div class="task-row ${t.done ? 'done' : ''} priority-${t.prioridade}">
+        <div class="task-dot-col">
+          <button class="check-btn" data-check="${t.id}" aria-label="Marcar como concluída">✓</button>
+        </div>
+        <div class="task-time">${t.horario}</div>
+        <div class="task-main">
+          <p class="task-name">${escapeHtml(t.nome)}</p>
+          <div class="task-meta">
+            <span class="badge ${badgeClass}">${badgeIcon} ${capitalize(t.prioridade)}</span>
+            <span class="badge badge-cat">${escapeHtml(t.categoria||'')}</span>
+            ${recorrenciaLabel ? `<span class="badge badge-cat">${recorrenciaLabel}</span>` : ''}
+            ${lembreteIcon}
+          </div>
+          <div class="task-actions">
+            <button class="icon-btn" data-edit="${t.id}" aria-label="Editar">✏️</button>
+            <button class="icon-btn" data-del="${t.id}" aria-label="Excluir">🗑️</button>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function escapeHtml(s){ const div = document.createElement('div'); div.textContent = s; return div.innerHTML; }
+  function capitalize(s){ return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+
+  async function toggleDone(id){
+    const t = tasks.find(x => x.id === id);
+    if(!t) return;
+    await updateTask(id, { done: !t.done });
+    render();
+  }
+  async function handleDelete(id){
+    const t = tasks.find(x => x.id === id);
+    if(!t) return;
+    if(confirm(`Excluir "${t.nome}"? Essa ação não pode ser desfeita.`)){
+      await deleteTaskById(id);
+      render();
+      showToast('Tarefa excluída.');
+    }
+  }
+  function openEdit(id){
+    const t = tasks.find(x => x.id === id);
+    if(!t) return;
+    editingId = id;
+    els.modalTitle.textContent = 'Editar tarefa';
+    els.submitBtn.textContent = 'Salvar alterações';
+    $('#taskId').value = t.id;
+    $('#fieldNome').value = t.nome;
+    $('#fieldDescricao').value = t.descricao || '';
+    $('#fieldData').value = t.data;
+    $('#fieldHorario').value = t.horario;
+    $('#fieldCategoria').value = t.categoria;
+    $('#fieldRecorrencia').value = t.recorrencia;
+    $('#fieldLembrete').value = t.lembrete;
+    setPriority(t.prioridade);
+    openModal();
+  }
+
+  function setPriority(p){
+    els.priorityPicker.querySelectorAll('.priority-opt').forEach(el => { el.dataset.active = (el.dataset.p === p) ? 'true' : 'false'; });
+  }
+  function getPriority(){
+    const active = els.priorityPicker.querySelector('[data-active="true"]');
+    return active ? active.dataset.p : 'media';
+  }
+  els.priorityPicker.querySelectorAll('.priority-opt').forEach(el => el.addEventListener('click', () => setPriority(el.dataset.p)));
+
+  function openModal(){
+    els.modalOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => $('#fieldNome').focus(), 250);
+  }
+  function closeModal(){
+    els.modalOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+    resetForm();
+  }
+  function resetForm(){
+    editingId = null;
+    els.taskForm.reset();
+    els.modalTitle.textContent = 'Nova tarefa';
+    els.submitBtn.textContent = 'Salvar tarefa';
+    $('#fieldData').value = todayISO();
+    setPriority('media');
+  }
+
+  els.fab.addEventListener('click', () => { resetForm(); openModal(); });
+  $('#closeModalBtn').addEventListener('click', closeModal);
+  els.modalOverlay.addEventListener('click', (e) => { if(e.target === els.modalOverlay) closeModal(); });
+  document.addEventListener('keydown', (e) => { if(e.key === 'Escape' && els.modalOverlay.classList.contains('open')) closeModal(); });
+
+  els.taskForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const payload = {
+      nome: $('#fieldNome').value.trim(),
+      descricao: $('#fieldDescricao').value.trim(),
+      data: $('#fieldData').value,
+      horario: $('#fieldHorario').value,
+      prioridade: getPriority(),
+      categoria: $('#fieldCategoria').value,
+      recorrencia: $('#fieldRecorrencia').value,
+      lembrete: $('#fieldLembrete').value,
+    };
+    if(!payload.nome || !payload.data || !payload.horario) return;
+    els.submitBtn.disabled = true;
+    try{
+      if(editingId){
+        await updateTask(editingId, payload);
+        showToast('Tarefa atualizada.');
+      } else {
+        await createTask(payload);
+        showToast('Tarefa criada.');
+      }
+      closeModal();
+      render();
+    } finally {
+      els.submitBtn.disabled = false;
+    }
+  });
+
+  let toastTimer = null;
+  function showToast(msg){
+    els.toast.textContent = msg;
+    els.toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => els.toast.classList.remove('show'), 2400);
+  }
+
+  setTodayChip();
+  resetForm();
+  initAuth();
 })();
 </script>
 </body>
