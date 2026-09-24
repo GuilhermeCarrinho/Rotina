@@ -3,106 +3,96 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Meu Dia</title>
+<title>Meu Planner</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f6f4ef; --panel:#ffffff; --ink:#20201c; --sub:#6b675f;
-  --line:#e4e0d6; --accent:#3d5a3d; --accent-soft:#e6ede4;
-  --warn:#a3542f; --warn-soft:#f3e4da;
-  --radius:10px;
+  --bg:#f7f8f5; --panel:#ffffff; --ink:#232922; --sub:#6f776d;
+  --line:#e2e6dd; --accent:#2f6f5e; --accent-soft:#e2ede8;
+  --trab:#3b5a8a; --trab-soft:#e7edf6;
+  --renda:#a3711f; --renda-soft:#f5ead4;
+  --pess:#6a4a86; --pess-soft:#efe6f5;
+  --radius:12px;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#1b1b18; --panel:#242420; --ink:#efece4; --sub:#a19c8f;
-    --line:#38372f; --accent:#8fb894; --accent-soft:#2a332a;
-    --warn:#e3a37b; --warn-soft:#3a2c22;
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#1b1b18; --panel:#242420; --ink:#efece4; --sub:#a19c8f;
-  --line:#38372f; --accent:#8fb894; --accent-soft:#2a332a;
-  --warn:#e3a37b; --warn-soft:#3a2c22;
 }
 *{box-sizing:border-box}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;min-height:100%}
-h1,h2,h3,.brand{font-family:'Fraunces',serif}
+h1,h2,.brand{font-family:'Fraunces',serif}
 button{font-family:inherit;cursor:pointer}
-input,select,textarea{font-family:inherit;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:9px 10px;font-size:14px}
+input,select{font-family:inherit;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:9px 10px;font-size:14px}
 .hidden{display:none !important}
 
-/* auth */
 #authScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
-.authCard{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:32px;width:100%;max-width:360px}
+.authCard{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:32px;width:100%;max-width:360px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
 .authCard h1{font-size:28px;margin:0 0 6px;font-weight:700}
 .authCard p{color:var(--sub);margin:0 0 22px;font-size:14px}
 .authCard input{width:100%;margin-bottom:10px}
 .authCard button{width:100%;padding:10px;border:none;border-radius:8px;background:var(--accent);color:#fff;font-weight:600;margin-top:6px}
 .authSwitch{margin-top:16px;font-size:13px;color:var(--sub);text-align:center}
 .authSwitch a{color:var(--accent);cursor:pointer;text-decoration:underline}
-.authMsg{font-size:13px;color:var(--warn);min-height:18px;margin-top:4px}
+.authMsg{font-size:13px;color:var(--renda);min-height:18px;margin-top:4px}
 
-/* app shell */
-#app{max-width:640px;margin:0 auto;padding:20px 16px 100px}
-header.top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:18px}
+#app{max-width:760px;margin:0 auto;padding:20px 16px 40px}
+header.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
 header.top .brand{font-size:22px;font-weight:700}
 header.top button{background:none;border:none;color:var(--sub);font-size:13px;text-decoration:underline}
-nav.tabs{position:sticky;bottom:0;left:0;right:0;background:var(--panel);border-top:1px solid var(--line);display:flex;padding:8px calc(8px + env(safe-area-inset-left,0px)) calc(10px + env(safe-area-inset-bottom,0px)) calc(8px + env(safe-area-inset-right,0px));margin:24px -16px -100px;gap:4px}
-nav.tabs button{flex:1;background:none;border:none;color:var(--sub);font-size:12px;padding:8px 2px;border-radius:8px}
-nav.tabs button.active{color:var(--accent);background:var(--accent-soft);font-weight:600}
+
+nav.tabs{display:flex;gap:6px;margin-bottom:16px;border-bottom:1px solid var(--line)}
+nav.tabs button{background:none;border:none;color:var(--sub);font-size:14px;padding:10px 4px;margin-right:14px;border-bottom:2px solid transparent}
+nav.tabs button.active{color:var(--accent);font-weight:600;border-color:var(--accent)}
 
 section.view{display:none}
 section.view.active{display:block}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:16px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
 .card h2{font-size:15px;margin:0 0 12px;font-weight:600}
-.muted{color:var(--sub);font-size:13px}
 
-/* progress */
-.progressBar{height:8px;background:var(--accent-soft);border-radius:99px;overflow:hidden;margin:8px 0}
-.progressFill{height:100%;background:var(--accent);border-radius:99px;transition:width .3s}
+.formGrid{display:grid;grid-template-columns:1fr;gap:8px}
+@media(min-width:560px){.formGrid{grid-template-columns:2fr 1fr 1fr auto}}
+.formGrid button{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-weight:600;font-size:13px}
 
-/* item rows */
-.row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
-.row:last-child{border-bottom:none}
-.row .chk{width:19px;height:19px;flex-shrink:0;border:1.5px solid var(--sub);border-radius:5px;background:none;display:flex;align-items:center;justify-content:center;color:var(--accent)}
+.chips{display:flex;gap:6px;margin:14px 0;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--panel);color:var(--sub);font-size:12.5px;padding:6px 12px;border-radius:99px}
+.chip.active{background:var(--accent-soft);color:var(--accent);border-color:var(--accent-soft);font-weight:600}
+
+.dayGroup{margin-bottom:14px}
+.dayGroup h3{font-size:13px;color:var(--sub);font-weight:600;margin:0 0 6px;text-transform:capitalize}
+.row{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--line);border-radius:9px;margin-bottom:7px;background:var(--panel)}
+.row .chk{width:20px;height:20px;flex-shrink:0;border:1.5px solid var(--sub);border-radius:5px;background:none;display:flex;align-items:center;justify-content:center;color:var(--accent)}
 .row .chk.done{background:var(--accent);border-color:var(--accent);color:#fff}
 .row .txt{flex:1;min-width:0}
 .row .title{font-size:14px}
 .row .title.done{text-decoration:line-through;color:var(--sub)}
-.row .meta{font-size:11.5px;color:var(--sub);margin-top:1px}
-.tag{font-size:10.5px;padding:2px 7px;border-radius:99px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
-.tag.p-alta{background:var(--warn-soft);color:var(--warn)}
-.del{background:none;border:none;color:var(--sub);font-size:16px;padding:2px 4px}
+.cat{font-size:10.5px;padding:2px 8px;border-radius:99px;white-space:nowrap;font-weight:600}
+.cat.trabalho{background:var(--trab-soft);color:var(--trab)}
+.cat.renda_extra{background:var(--renda-soft);color:var(--renda)}
+.cat.pessoal{background:var(--pess-soft);color:var(--pess)}
+.iconBtn{background:none;border:none;color:var(--sub);font-size:15px;padding:3px 5px}
+.editRow{display:flex;flex-wrap:wrap;gap:6px;flex:1}
+.editRow input,.editRow select{flex:1;min-width:100px}
+.editRow button{border:none;border-radius:7px;padding:7px 10px;font-size:12.5px;font-weight:600}
+.editRow .save{background:var(--accent);color:#fff}
+.editRow .cancel{background:var(--line);color:var(--ink)}
+.empty{color:var(--sub);font-size:13.5px;padding:10px 0}
 
-/* add bar */
-.addBar{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
-.addBar input[type=text]{flex:1;min-width:120px}
-.addBar button.go{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:9px 14px;font-weight:600;font-size:13px}
-.addRow2{display:flex;gap:6px;margin-top:6px}
-.addRow2>*{flex:1}
-
-/* kanban */
-.kanban{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px}
-.kcol{flex:0 0 74%;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:12px}
-.kcol h3{font-size:13px;margin:0 0 8px;color:var(--sub);font-weight:600}
-.kcard{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 10px;margin-bottom:8px;font-size:13.5px}
-.kcard .mv{display:flex;gap:6px;margin-top:6px}
-.kcard .mv button{font-size:10.5px;background:var(--accent-soft);border:none;border-radius:6px;padding:3px 7px;color:var(--accent)}
-
-textarea{width:100%;resize:vertical;min-height:60px}
-.saveMini{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:7px 12px;font-size:13px;font-weight:600;margin-top:8px}
+.statGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+.stat .num{font-family:'Fraunces',serif;font-size:32px;font-weight:700}
+.stat .lbl{font-size:13px;color:var(--sub);margin-top:2px}
+.progressBar{height:8px;background:var(--accent-soft);border-radius:99px;overflow:hidden;margin-top:10px}
+.progressFill{height:100%;background:var(--accent);border-radius:99px;transition:width .3s}
+.catBreak{margin-top:8px;font-size:12.5px;color:var(--sub)}
+.catBreak span{display:inline-block;margin-right:12px}
 </style>
 </head>
 <body>
 
 <div id="authScreen">
   <div class="authCard">
-    <h1>Meu Dia</h1>
-    <p>Organize sua rotina, pendências, hábitos e ideias em um só lugar.</p>
+    <h1>Meu Planner</h1>
+    <p>Cadastre suas atividades de trabalho, renda extra e pessoais.</p>
     <input id="authEmail" type="email" placeholder="E-mail">
     <input id="authPass" type="password" placeholder="Senha">
     <button id="authSubmit" onclick="handleAuth()">Entrar</button>
@@ -113,118 +103,69 @@ textarea{width:100%;resize:vertical;min-height:60px}
 
 <div id="app" class="hidden">
   <header class="top">
-    <div class="brand">Meu Dia</div>
+    <div class="brand">Meu Planner</div>
     <button onclick="logout()">Sair</button>
   </header>
 
-  <!-- HOJE -->
-  <section class="view active" id="view-hoje">
-    <div class="card" id="checkinCard">
-      <h2>Check-in da manhã</h2>
-      <div id="checkinForm">
-        <textarea id="intencaoDia" placeholder="Como você quer que hoje seja?"></textarea>
-        <button class="saveMini" onclick="salvarCheckin()">Salvar intenção</button>
-      </div>
-      <div id="checkinSaved" class="hidden muted"></div>
-    </div>
-
-    <div class="card">
-      <h2>Foco do dia</h2>
-      <div id="focoList"></div>
-      <div class="addBar"><input type="text" id="focoInput" placeholder="Uma prioridade de hoje"><button class="go" onclick="addFoco()">+</button></div>
-    </div>
-
-    <div class="card">
-      <h2>Tarefas de hoje</h2>
-      <div class="muted" id="tarefasResumo"></div>
-      <div class="progressBar"><div class="progressFill" id="tarefasProgresso" style="width:0%"></div></div>
-      <div id="tarefasList"></div>
-      <div class="addBar">
-        <input type="text" id="tarefaInput" placeholder="Nova tarefa">
-        <button class="go" onclick="addTarefa()">+</button>
-      </div>
-      <div class="addRow2">
-        <input type="time" id="tarefaHora">
-        <select id="tarefaPrioridade"><option value="normal">Prioridade normal</option><option value="alta">Prioridade alta</option></select>
-      </div>
-    </div>
-
-    <div class="card" id="fechamentoCard">
-      <h2>Fechamento do dia</h2>
-      <div id="fechamentoForm">
-        <textarea id="reflexaoDia" placeholder="Como foi o dia? O que ficou pendente?"></textarea>
-        <button class="saveMini" onclick="salvarFechamento()">Salvar fechamento</button>
-      </div>
-      <div id="fechamentoSaved" class="hidden muted"></div>
-    </div>
-  </section>
-
-  <!-- PENDÊNCIAS -->
-  <section class="view" id="view-pendencias">
-    <div class="card">
-      <h2>Pendências</h2>
-      <div class="addBar"><input type="text" id="pendInput" placeholder="Nova pendência"><button class="go" onclick="addPendencia()">+</button></div>
-    </div>
-    <div class="kanban">
-      <div class="kcol"><h3>Hoje</h3><div id="kcol-hoje"></div></div>
-      <div class="kcol"><h3>Semana</h3><div id="kcol-semana"></div></div>
-      <div class="kcol"><h3>Depois</h3><div id="kcol-depois"></div></div>
-    </div>
-  </section>
-
-  <!-- LEMBRETES E HÁBITOS -->
-  <section class="view" id="view-lembretes">
-    <div class="card">
-      <h2>Lembretes com horário</h2>
-      <div id="lembretesList"></div>
-      <div class="addBar"><input type="text" id="lembreteInput" placeholder="Ex: Tomar remédio"><input type="time" id="lembreteHora" style="max-width:110px"><button class="go" onclick="addLembrete()">+</button></div>
-    </div>
-    <div class="card">
-      <h2>Hábitos de hoje</h2>
-      <div id="habitosList"></div>
-      <div class="addBar"><input type="text" id="habitoInput" placeholder="Novo hábito recorrente"><button class="go" onclick="addHabito()">+</button></div>
-    </div>
-    <div class="card">
-      <h2>Cobrar até concluir</h2>
-      <p class="muted">Fica aqui até você marcar como concluída — sem prazo fixo.</p>
-      <div id="cobrarList"></div>
-      <div class="addBar"><input type="text" id="cobrarInput" placeholder="O que precisa ser resolvido?"><button class="go" onclick="addCobrar()">+</button></div>
-    </div>
-  </section>
-
-  <!-- OPORTUNIDADES -->
-  <section class="view" id="view-oport">
-    <div class="card">
-      <h2>Ideias de renda extra</h2>
-      <p class="muted">Só planejamento e progresso — sem números financeiros aqui.</p>
-      <div id="oportList"></div>
-      <div class="addBar"><input type="text" id="oportInput" placeholder="Nova ideia"><button class="go" onclick="addOport()">+</button></div>
-    </div>
-  </section>
-
   <nav class="tabs">
-    <button class="tab-btn active" data-view="hoje" onclick="showView('hoje')">Hoje</button>
-    <button class="tab-btn" data-view="pendencias" onclick="showView('pendencias')">Pendências</button>
-    <button class="tab-btn" data-view="lembretes" onclick="showView('lembretes')">Lembretes</button>
-    <button class="tab-btn" data-view="oport" onclick="showView('oport')">Oportunidades</button>
+    <button class="tab-btn active" data-view="planner" onclick="showView('planner')">Planner</button>
+    <button class="tab-btn" data-view="dash" onclick="showView('dash')">Dashboard</button>
   </nav>
+
+  <section class="view active" id="view-planner">
+    <div class="card">
+      <h2>Nova atividade</h2>
+      <div class="formGrid">
+        <input type="text" id="novoTitulo" placeholder="Nome da atividade">
+        <input type="date" id="novaData">
+        <select id="novaCategoria">
+          <option value="trabalho">Trabalho</option>
+          <option value="renda_extra">Renda extra</option>
+          <option value="pessoal">Pessoal</option>
+        </select>
+        <button onclick="addAtividade()">Adicionar</button>
+      </div>
+    </div>
+
+    <div class="chips" id="filtroChips"></div>
+    <div id="listaAtividades"></div>
+  </section>
+
+  <section class="view" id="view-dash">
+    <div class="card">
+      <h2>Hoje</h2>
+      <div class="statGrid">
+        <div class="stat"><div class="num" id="hojeFeitas">0</div><div class="lbl">concluídas</div></div>
+        <div class="stat"><div class="num" id="hojePlan">0</div><div class="lbl">planejadas</div></div>
+      </div>
+      <div class="progressBar"><div class="progressFill" id="hojeBar" style="width:0%"></div></div>
+    </div>
+    <div class="card">
+      <h2>Esta semana</h2>
+      <div class="statGrid">
+        <div class="stat"><div class="num" id="semFeitas">0</div><div class="lbl">concluídas</div></div>
+        <div class="stat"><div class="num" id="semPlan">0</div><div class="lbl">planejadas</div></div>
+      </div>
+      <div class="progressBar"><div class="progressFill" id="semBar" style="width:0%"></div></div>
+      <div class="catBreak" id="semCatBreak"></div>
+    </div>
+  </section>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-/* ====== CONFIGURE AQUI ======
-   1) Crie um projeto em supabase.com
-   2) Cole a URL e a chave anon abaixo
-   3) Rode o SQL do final deste arquivo (em comentário) no SQL Editor do Supabase
-*/
 const SUPABASE_URL = "https://mvsdxyilycfnxwvsweea.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im12c2R4eWlseWNmbnh3dnN3ZWVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg4MDQ3NTgsImV4cCI6MjEwNDM4MDc1OH0.iGWhddk1kOqD2y_yg2YRb8c-6nTwsFK19PXNBnWcwGI";
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let currentUser = null;
-let items = []; // itens de items (tarefas, foco, pendencias, lembretes, habitos, cobrar, oportunidades)
+let atividades = [];
 let isSignup = false;
-const todayStr = () => new Date().toISOString().slice(0,10);
+let filtro = 'todos';
+const catLabel = {trabalho:'Trabalho', renda_extra:'Renda extra', pessoal:'Pessoal'};
+const pad = n => String(n).padStart(2,'0');
+const toISO = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const todayStr = () => toISO(new Date());
 
 function toggleAuthMode(){
   isSignup = !isSignup;
@@ -261,140 +202,141 @@ async function startApp(user){
   currentUser = user;
   document.getElementById('authScreen').classList.add('hidden');
   document.getElementById('app').classList.remove('hidden');
-  await loadItems();
-  await loadCheckin();
+  document.getElementById('novaData').value = todayStr();
+  await loadAtividades();
   renderAll();
 }
 
-async function loadItems(){
-  const { data, error } = await sb.from('rotina_items').select('*').eq('user_id', currentUser.id).order('created_at');
-  items = error ? [] : data;
-}
-async function loadCheckin(){
-  const { data } = await sb.from('rotina_checkins').select('*').eq('user_id', currentUser.id).eq('data', todayStr()).maybeSingle();
-  const c = data || {};
-  if(c.intencao){
-    document.getElementById('checkinForm').classList.add('hidden');
-    const s = document.getElementById('checkinSaved'); s.classList.remove('hidden'); s.textContent = '"' + c.intencao + '"';
-  }
-  if(c.reflexao){
-    document.getElementById('fechamentoForm').classList.add('hidden');
-    const s = document.getElementById('fechamentoSaved'); s.classList.remove('hidden'); s.textContent = c.reflexao;
-  }
-  window.__checkin = c;
+async function loadAtividades(){
+  const { data, error } = await sb.from('atividades').select('*').eq('user_id', currentUser.id).order('dia');
+  atividades = error ? [] : data;
 }
 
-async function addItem(type, fields){
-  const row = { user_id: currentUser.id, type, done:false, created_at:new Date().toISOString(), data: todayStr(), ...fields };
-  const { data, error } = await sb.from('rotina_items').insert(row).select().single();
-  if(!error){ items.push(data); renderAll(); }
+async function addAtividade(){
+  const t = document.getElementById('novoTitulo');
+  const d = document.getElementById('novaData');
+  const c = document.getElementById('novaCategoria');
+  if(!t.value.trim()) return;
+  const row = { user_id: currentUser.id, title: t.value.trim(), dia: d.value || todayStr(), categoria: c.value, done:false };
+  const { data, error } = await sb.from('atividades').insert(row).select().single();
+  if(!error){ atividades.push(data); t.value=''; renderAll(); }
 }
-async function toggleItem(id){
-  const it = items.find(i=>i.id===id); if(!it) return;
+async function toggleAtividade(id){
+  const it = atividades.find(i=>i.id===id); if(!it) return;
   it.done = !it.done;
-  await sb.from('rotina_items').update({ done: it.done }).eq('id', id);
+  await sb.from('atividades').update({ done: it.done }).eq('id', id);
   renderAll();
 }
-async function deleteItem(id){
-  items = items.filter(i=>i.id!==id);
-  await sb.from('rotina_items').delete().eq('id', id);
+async function deleteAtividade(id){
+  atividades = atividades.filter(i=>i.id!==id);
+  await sb.from('atividades').delete().eq('id', id);
   renderAll();
 }
-async function moveItem(id, col){
-  const it = items.find(i=>i.id===id); if(!it) return;
-  it.kanban_col = col;
-  await sb.from('rotina_items').update({ kanban_col: col }).eq('id', id);
+function startEdit(id){
+  const it = atividades.find(i=>i.id===id);
+  it._editing = true;
+  renderAll();
+}
+function cancelEdit(id){
+  const it = atividades.find(i=>i.id===id);
+  delete it._editing;
+  renderAll();
+}
+async function saveEdit(id){
+  const it = atividades.find(i=>i.id===id);
+  const title = document.getElementById('editTitulo-'+id).value.trim();
+  const dia = document.getElementById('editData-'+id).value;
+  const categoria = document.getElementById('editCat-'+id).value;
+  if(!title) return;
+  it.title = title; it.dia = dia; it.categoria = categoria;
+  delete it._editing;
+  await sb.from('atividades').update({ title, dia, categoria }).eq('id', id);
   renderAll();
 }
 
-async function salvarCheckin(){
-  const intencao = document.getElementById('intencaoDia').value.trim();
-  if(!intencao) return;
-  await sb.from('rotina_checkins').upsert({ user_id: currentUser.id, data: todayStr(), intencao }, { onConflict:'user_id,data' });
-  document.getElementById('checkinForm').classList.add('hidden');
-  const s = document.getElementById('checkinSaved'); s.classList.remove('hidden'); s.textContent = '"' + intencao + '"';
-}
-async function salvarFechamento(){
-  const reflexao = document.getElementById('reflexaoDia').value.trim();
-  if(!reflexao) return;
-  await sb.from('rotina_checkins').upsert({ user_id: currentUser.id, data: todayStr(), reflexao }, { onConflict:'user_id,data' });
-  document.getElementById('fechamentoForm').classList.add('hidden');
-  const s = document.getElementById('fechamentoSaved'); s.classList.remove('hidden'); s.textContent = reflexao;
-}
-
-function addFoco(){ const el=document.getElementById('focoInput'); if(!el.value.trim())return; addItem('foco',{title:el.value.trim()}); el.value=''; }
-function addTarefa(){
-  const t=document.getElementById('tarefaInput'), h=document.getElementById('tarefaHora'), p=document.getElementById('tarefaPrioridade');
-  if(!t.value.trim())return;
-  addItem('tarefa',{title:t.value.trim(), hora:h.value||null, prioridade:p.value});
-  t.value=''; h.value='';
-}
-function addPendencia(){ const el=document.getElementById('pendInput'); if(!el.value.trim())return; addItem('pendencia',{title:el.value.trim(), kanban_col:'hoje'}); el.value=''; }
-function addLembrete(){
-  const t=document.getElementById('lembreteInput'), h=document.getElementById('lembreteHora');
-  if(!t.value.trim())return;
-  addItem('lembrete',{title:t.value.trim(), hora:h.value||null});
-  t.value=''; h.value='';
-}
-function addHabito(){ const el=document.getElementById('habitoInput'); if(!el.value.trim())return; addItem('habito',{title:el.value.trim()}); el.value=''; }
-function addCobrar(){ const el=document.getElementById('cobrarInput'); if(!el.value.trim())return; addItem('cobrar',{title:el.value.trim()}); el.value=''; }
-function addOport(){ const el=document.getElementById('oportInput'); if(!el.value.trim())return; addItem('oportunidade',{title:el.value.trim()}); el.value=''; }
+function setFiltro(f){ filtro = f; renderAll(); }
 
 function showView(v){
   document.querySelectorAll('.view').forEach(s=>s.classList.remove('active'));
   document.getElementById('view-'+v).classList.add('active');
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.view===v));
+  if(v==='dash') renderDash();
 }
 
-function rowHtml(it, {showTag=true, extra=''}={}){
-  const tagTxt = it.hora ? it.hora : (it.prioridade==='alta' ? 'Alta' : '');
-  const tagCls = it.prioridade==='alta' ? 'tag p-alta' : 'tag';
+function fmtDia(iso){
+  const d = new Date(iso+'T00:00:00');
+  return d.toLocaleDateString('pt-BR', { weekday:'short', day:'2-digit', month:'2-digit' });
+}
+
+function rowHtml(it){
+  if(it._editing){
+    return `<div class="row"><div class="editRow">
+      <input type="text" id="editTitulo-${it.id}" value="${it.title.replace(/"/g,'&quot;')}">
+      <input type="date" id="editData-${it.id}" value="${it.dia}">
+      <select id="editCat-${it.id}">
+        <option value="trabalho" ${it.categoria==='trabalho'?'selected':''}>Trabalho</option>
+        <option value="renda_extra" ${it.categoria==='renda_extra'?'selected':''}>Renda extra</option>
+        <option value="pessoal" ${it.categoria==='pessoal'?'selected':''}>Pessoal</option>
+      </select>
+      <button class="save" onclick="saveEdit(${it.id})">Salvar</button>
+      <button class="cancel" onclick="cancelEdit(${it.id})">Cancelar</button>
+    </div></div>`;
+  }
   return `<div class="row">
-    <button class="chk ${it.done?'done':''}" onclick="toggleItem(${it.id})">${it.done?'✓':''}</button>
-    <div class="txt">
-      <div class="title ${it.done?'done':''}">${it.title}</div>
-      ${(it.hora||it.prioridade)?`<div class="meta">${it.hora?('Horário '+it.hora):''}</div>`:''}
-    </div>
-    ${showTag && tagTxt ? `<span class="${tagCls}">${tagTxt}</span>` : ''}
-    ${extra}
-    <button class="del" onclick="deleteItem(${it.id})">×</button>
+    <button class="chk ${it.done?'done':''}" onclick="toggleAtividade(${it.id})">${it.done?'✓':''}</button>
+    <div class="txt"><div class="title ${it.done?'done':''}">${it.title}</div></div>
+    <span class="cat ${it.categoria}">${catLabel[it.categoria]}</span>
+    <button class="iconBtn" onclick="startEdit(${it.id})">✎</button>
+    <button class="iconBtn" onclick="deleteAtividade(${it.id})">×</button>
   </div>`;
 }
 
 function renderAll(){
+  document.getElementById('filtroChips').innerHTML = ['todos','trabalho','renda_extra','pessoal'].map(f=>
+    `<button class="chip ${filtro===f?'active':''}" onclick="setFiltro('${f}')">${f==='todos'?'Todos':catLabel[f]}</button>`
+  ).join('');
+
+  const filtradas = atividades.filter(a => filtro==='todos' || a.categoria===filtro);
+  const grupos = {};
+  filtradas.forEach(a => { (grupos[a.dia] = grupos[a.dia]||[]).push(a); });
+  const dias = Object.keys(grupos).sort();
+
+  document.getElementById('listaAtividades').innerHTML = dias.length
+    ? dias.map(d => `<div class="dayGroup"><h3>${fmtDia(d)}</h3>${grupos[d].map(rowHtml).join('')}</div>`).join('')
+    : '<p class="empty">Nenhuma atividade encontrada.</p>';
+
+  renderDash();
+}
+
+function weekRange(){
+  const now = new Date();
+  const day = (now.getDay()+6)%7; // 0=segunda
+  const monday = new Date(now); monday.setDate(now.getDate()-day);
+  const sunday = new Date(monday); sunday.setDate(monday.getDate()+6);
+  return [toISO(monday), toISO(sunday)];
+}
+
+function renderDash(){
   const today = todayStr();
-  const of = t => items.filter(i=>i.type===t);
+  const hoje = atividades.filter(a=>a.dia===today);
+  const hojeFeitas = hoje.filter(a=>a.done).length;
+  document.getElementById('hojeFeitas').textContent = hojeFeitas;
+  document.getElementById('hojePlan').textContent = hoje.length;
+  document.getElementById('hojeBar').style.width = hoje.length ? (hojeFeitas/hoje.length*100)+'%' : '0%';
 
-  // foco
-  document.getElementById('focoList').innerHTML = of('foco').filter(i=>i.data===today).map(i=>rowHtml(i,{showTag:false})).join('') || '<p class="muted">Nenhuma prioridade definida ainda.</p>';
+  const [ini, fim] = weekRange();
+  const semana = atividades.filter(a=>a.dia>=ini && a.dia<=fim);
+  const semFeitas = semana.filter(a=>a.done).length;
+  document.getElementById('semFeitas').textContent = semFeitas;
+  document.getElementById('semPlan').textContent = semana.length;
+  document.getElementById('semBar').style.width = semana.length ? (semFeitas/semana.length*100)+'%' : '0%';
 
-  // tarefas
-  const tarefas = of('tarefa').filter(i=>i.data===today);
-  const feitas = tarefas.filter(i=>i.done).length;
-  document.getElementById('tarefasResumo').textContent = `${feitas} de ${tarefas.length} concluídas`;
-  document.getElementById('tarefasProgresso').style.width = tarefas.length ? (feitas/tarefas.length*100)+'%' : '0%';
-  document.getElementById('tarefasList').innerHTML = tarefas.sort((a,b)=>(a.hora||'99').localeCompare(b.hora||'99')).map(i=>rowHtml(i)).join('') || '<p class="muted">Nenhuma tarefa hoje.</p>';
-
-  // pendencias kanban
-  ['hoje','semana','depois'].forEach(col=>{
-    const list = of('pendencia').filter(i=>(i.kanban_col||'hoje')===col);
-    document.getElementById('kcol-'+col).innerHTML = list.map(i=>{
-      const others = ['hoje','semana','depois'].filter(c=>c!==col);
-      return `<div class="kcard">${i.title}<div class="mv">${others.map(o=>`<button onclick="moveItem(${i.id},'${o}')">→ ${o}</button>`).join('')}<button onclick="deleteItem(${i.id})">×</button></div></div>`;
-    }).join('') || '<p class="muted">Vazio</p>';
-  });
-
-  // lembretes
-  document.getElementById('lembretesList').innerHTML = of('lembrete').sort((a,b)=>(a.hora||'').localeCompare(b.hora||'')).map(i=>rowHtml(i)).join('') || '<p class="muted">Nenhum lembrete.</p>';
-
-  // habitos (resetam visualmente por dia via done por data — simplificado: done fixo, usuário desmarca no dia seguinte)
-  document.getElementById('habitosList').innerHTML = of('habito').map(i=>rowHtml(i,{showTag:false})).join('') || '<p class="muted">Nenhum hábito ainda.</p>';
-
-  // cobrar
-  document.getElementById('cobrarList').innerHTML = of('cobrar').filter(i=>!i.done).map(i=>rowHtml(i,{showTag:false})).join('') || '<p class="muted">Nada pendente. 🎉</p>';
-
-  // oportunidades
-  document.getElementById('oportList').innerHTML = of('oportunidade').map(i=>rowHtml(i,{showTag:false})).join('') || '<p class="muted">Nenhuma ideia registrada.</p>';
+  const breakdown = ['trabalho','renda_extra','pessoal'].map(c=>{
+    const list = semana.filter(a=>a.categoria===c);
+    const done = list.filter(a=>a.done).length;
+    return `<span>${catLabel[c]}: ${done}/${list.length}</span>`;
+  }).join('');
+  document.getElementById('semCatBreak').innerHTML = breakdown;
 }
 
 sb.auth.getSession().then(({data})=>{ if(data.session) startApp(data.session.user); });
@@ -402,30 +344,20 @@ sb.auth.getSession().then(({data})=>{ if(data.session) startApp(data.session.use
 </body>
 </html>
 <!--
-SQL para rodar no Supabase (SQL Editor):
+SQL para rodar no Supabase (SQL Editor) — nova tabela usada por esta versão do app:
 
-create table rotina_items (
+create table atividades (
   id bigint generated always as identity primary key,
   user_id uuid references auth.users not null,
-  type text not null,
   title text not null,
-  data date default current_date,
-  hora time,
-  prioridade text,
-  kanban_col text,
+  dia date not null default current_date,
+  categoria text not null default 'pessoal',
   done boolean default false,
   created_at timestamptz default now()
 );
-alter table rotina_items enable row level security;
-create policy "own items" on rotina_items for all using (auth.uid() = user_id);
+alter table atividades enable row level security;
+create policy "own atividades" on atividades for all using (auth.uid() = user_id);
 
-create table rotina_checkins (
-  user_id uuid references auth.users not null,
-  data date not null default current_date,
-  intencao text,
-  reflexao text,
-  primary key (user_id, data)
-);
-alter table rotina_checkins enable row level security;
-create policy "own checkins" on rotina_checkins for all using (auth.uid() = user_id);
+-- As tabelas antigas (rotina_items, rotina_checkins) não são mais usadas por esta versão
+-- e podem ser removidas se quiser: drop table if exists rotina_items; drop table if exists rotina_checkins;
 -->
